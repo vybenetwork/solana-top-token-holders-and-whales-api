@@ -481,6 +481,11 @@ button:disabled {
   font-size: 1.1rem;
 }
 
+#tokenSection .section-header h2,
+#holdersSection .section-header h2 {
+  margin-bottom: 0.65rem;
+}
+
 .token-header {
   display: flex;
   align-items: center;
