@@ -22,6 +22,8 @@ interface HolderRow {
   rank?: number;
   ownerAddress?: string;
   ownerName?: string;
+  ownerLabels?: string[];
+  accountLabels?: string[];
   balance?: number | string;
   valueUsd?: number;
   percentageOfSupplyHeld?: number;
@@ -41,6 +43,11 @@ const tokenLogo = document.getElementById('tokenLogo') as HTMLImageElement;
 const tokenSymbol = document.getElementById('tokenSymbol') as HTMLElement;
 const tokenName = document.getElementById('tokenName') as HTMLElement;
 const tokenStats = document.getElementById('tokenStats') as HTMLElement;
+const tokenSupplyPanel = document.getElementById('tokenSupplyPanel') as HTMLElement;
+const tokenSupplyPie = document.getElementById('tokenSupplyPie') as HTMLElement;
+const tokenSupplyLegend = document.getElementById('tokenSupplyLegend') as HTMLElement;
+const tokenLabelSupplyPie = document.getElementById('tokenLabelSupplyPie') as HTMLElement;
+const tokenLabelSupplyLegend = document.getElementById('tokenLabelSupplyLegend') as HTMLElement;
 const holdersLoading = document.getElementById('holdersLoading') as HTMLElement;
 const holdersError = document.getElementById('holdersError') as HTMLElement;
 const holdersTitle = document.getElementById('holdersTitle') as HTMLElement;
@@ -113,6 +120,115 @@ function formatSupplyPercent(n: number | null | undefined): string {
   if (abs >= 0.01) return `${num.toFixed(2)}%`;
   const decimalsToFirstNonZero = Math.ceil(-Math.log10(abs));
   return `${num.toFixed(decimalsToFirstNonZero)}%`;
+}
+
+function toFiniteNumber(n: number | string | null | undefined): number {
+  if (n == null || n === '') return 0;
+  const num = Number(n);
+  return Number.isFinite(num) ? num : 0;
+}
+
+function isLabeledHolder(row: HolderRow): boolean {
+  if ((row.ownerName ?? '').trim() !== '') return true;
+  const labels = Array.isArray(row.ownerLabels) ? row.ownerLabels : Array.isArray(row.accountLabels) ? row.accountLabels : [];
+  return labels.some((label) => String(label).trim() !== '');
+}
+
+function hideChartsPanel(): void {
+  tokenSupplyPanel.hidden = true;
+  tokenSupplyLegend.innerHTML = '';
+  tokenLabelSupplyLegend.innerHTML = '';
+}
+
+function renderLegendDetails(balance: number, usdValue: number, symbol: string): string {
+  const tokenPart = formatBalance(balance, symbol);
+  const usdPart = formatUsdHolderValue(usdValue);
+  return `${tokenPart} • ${usdPart}`;
+}
+
+function renderLegendItem(label: string, pct: number, color: string, details: string): string {
+  return `<div class="token-supply-legend-item">
+    <span class="token-supply-legend-swatch" style="background:${color}"></span>
+    <span class="token-supply-legend-text">
+      <span class="token-supply-legend-title">${label} ${pct.toFixed(2)}%</span>
+      <span class="token-supply-legend-details">${details}</span>
+    </span>
+  </div>`;
+}
+
+function renderCharts(token: TokenData | null, holdersData: { data?: HolderRow[] }, topFetched: number): void {
+  const rows = holdersData.data ?? [];
+  tokenSupplyPanel.hidden = false;
+  const tokenSymbol = (token?.symbol ?? '').toUpperCase();
+  const currentSupply = Math.max(toFiniteNumber(token?.currentSupply ?? null), 0);
+  const marketCap = Math.max(toFiniteNumber(token?.marketCap ?? null), 0);
+
+  const topN = rows.slice(0, topFetched).reduce((acc, row) => acc + toFiniteNumber(row.percentageOfSupplyHeld ?? null), 0);
+  const top100 = rows.slice(0, 100).reduce((acc, row) => acc + toFiniteNumber(row.percentageOfSupplyHeld ?? null), 0);
+  const top10 = rows.slice(0, 10).reduce((acc, row) => acc + toFiniteNumber(row.percentageOfSupplyHeld ?? null), 0);
+  const topNBalance = rows.slice(0, topFetched).reduce((acc, row) => acc + toFiniteNumber(row.balance ?? null), 0);
+  const top100Balance = rows.slice(0, 100).reduce((acc, row) => acc + toFiniteNumber(row.balance ?? null), 0);
+  const top10Balance = rows.slice(0, 10).reduce((acc, row) => acc + toFiniteNumber(row.balance ?? null), 0);
+  const topNUsd = rows.slice(0, topFetched).reduce((acc, row) => acc + toFiniteNumber(row.valueUsd ?? null), 0);
+  const top100Usd = rows.slice(0, 100).reduce((acc, row) => acc + toFiniteNumber(row.valueUsd ?? null), 0);
+  const top10Usd = rows.slice(0, 10).reduce((acc, row) => acc + toFiniteNumber(row.valueUsd ?? null), 0);
+  const top10Slice = Math.max(0, Math.min(100, top10));
+  const top11to100Slice = Math.max(0, Math.min(100, Math.min(top100, topN) - top10Slice));
+  const showTop101Bucket = topFetched >= 250;
+  const top101toNSlice = showTop101Bucket
+    ? Math.max(0, Math.min(100, topN - Math.min(top100, topN)))
+    : 0;
+  const top11to100Balance = Math.max(0, top100Balance - top10Balance);
+  const top101toNBalance = Math.max(0, topNBalance - top100Balance);
+  const remainingBalance = Math.max(currentSupply - topNBalance, 0);
+  const top11to100Usd = Math.max(0, top100Usd - top10Usd);
+  const top101toNUsd = Math.max(0, topNUsd - top100Usd);
+  const remainingUsd = Math.max(marketCap - topNUsd, 0);
+  const remainingSupplySlice = Math.max(0, 100 - (top10Slice + top11to100Slice + top101toNSlice));
+  const a = top10Slice * 3.6;
+  const b = (top10Slice + top11to100Slice) * 3.6;
+  const c = (top10Slice + top11to100Slice + top101toNSlice) * 3.6;
+  tokenSupplyPie.style.background = `conic-gradient(
+    #3b82f6 0deg ${a}deg,
+    #2563eb ${a}deg ${b}deg,
+    #1d4ed8 ${b}deg ${c}deg,
+    #27272a ${c}deg 360deg
+  )`;
+  tokenSupplyLegend.innerHTML = `
+    ${renderLegendItem('Top 10 wallets', top10Slice, '#3b82f6', renderLegendDetails(top10Balance, top10Usd, tokenSymbol))}
+    ${renderLegendItem('Top 11-100 wallets', top11to100Slice, '#2563eb', renderLegendDetails(top11to100Balance, top11to100Usd, tokenSymbol))}
+    ${showTop101Bucket ? renderLegendItem(`Top 101-${topFetched.toLocaleString()} wallets`, top101toNSlice, '#1d4ed8', renderLegendDetails(top101toNBalance, top101toNUsd, tokenSymbol)) : ''}
+    ${renderLegendItem('Remaining supply', remainingSupplySlice, '#27272a', renderLegendDetails(remainingBalance, remainingUsd, tokenSymbol))}
+  `;
+
+  const labeledPct = rows
+    .slice(0, topFetched)
+    .reduce((acc, row) => acc + (isLabeledHolder(row) ? toFiniteNumber(row.percentageOfSupplyHeld ?? null) : 0), 0);
+  const labeledBalance = rows
+    .slice(0, topFetched)
+    .reduce((acc, row) => acc + (isLabeledHolder(row) ? toFiniteNumber(row.balance ?? null) : 0), 0);
+  const labeledUsd = rows
+    .slice(0, topFetched)
+    .reduce((acc, row) => acc + (isLabeledHolder(row) ? toFiniteNumber(row.valueUsd ?? null) : 0), 0);
+  const unlabeledTopNBalance = Math.max(0, topNBalance - labeledBalance);
+  const unlabeledTopNUsd = Math.max(0, topNUsd - labeledUsd);
+  const nonTopBalance = Math.max(currentSupply - topNBalance, 0);
+  const nonTopUsd = Math.max(marketCap - topNUsd, 0);
+  const labeledSlice = Math.max(0, Math.min(100, labeledPct));
+  const unlabeledTopNSlice = Math.max(0, Math.min(100, topN - labeledSlice));
+  const nonTopNSlice = Math.max(0, 100 - (labeledSlice + unlabeledTopNSlice));
+  const labeledDeg = labeledSlice * 3.6;
+  const unlabeledTopDeg = (labeledSlice + unlabeledTopNSlice) * 3.6;
+  tokenLabelSupplyPie.style.background = `conic-gradient(
+    #3b82f6 0deg ${labeledDeg}deg,
+    #1d4ed8 ${labeledDeg}deg ${unlabeledTopDeg}deg,
+    #27272a ${unlabeledTopDeg}deg 360deg
+  )`;
+  tokenLabelSupplyLegend.innerHTML = `
+    ${renderLegendItem(`Labeled top ${topFetched.toLocaleString()} supply`, labeledSlice, '#3b82f6', renderLegendDetails(labeledBalance, labeledUsd, tokenSymbol))}
+    ${renderLegendItem(`Unlabeled top ${topFetched.toLocaleString()} supply`, unlabeledTopNSlice, '#1d4ed8', renderLegendDetails(unlabeledTopNBalance, unlabeledTopNUsd, tokenSymbol))}
+    ${renderLegendItem(`Non-top ${topFetched.toLocaleString()} supply`, nonTopNSlice, '#27272a', renderLegendDetails(nonTopBalance, nonTopUsd, tokenSymbol))}
+  `;
 }
 
 const tokenSectionIcons: Record<string, string> = {
@@ -323,10 +439,15 @@ async function loadData(): Promise<void> {
   loadingIndicator.hidden = false;
   tokenSectionLoading.hidden = false;
   holdersLoading.hidden = false;
+  hideChartsPanel();
 
   try {
+    let tokenData: TokenData | null = null;
     const tokenRes = await fetchWithRetry(`/api/tokens/${encodeURIComponent(mint)}`);
-    if (tokenRes.ok) renderToken(await tokenRes.json() as TokenData);
+    if (tokenRes.ok) {
+      tokenData = await tokenRes.json() as TokenData;
+      renderToken(tokenData);
+    }
     else showSectionError(tokenSectionError, `Failed (${tokenRes.status})`);
     const holdersParams = new URLSearchParams({
       page: String(page),
@@ -340,17 +461,20 @@ async function loadData(): Promise<void> {
 
     const holdersRes = await fetchWithRetry(`/api/tokens/${encodeURIComponent(mint)}/top-holders?${holdersParams.toString()}`);
     if (holdersRes.ok) {
+      const holdersData = await holdersRes.json() as { data?: HolderRow[] };
       renderHolders(
-        await holdersRes.json() as { data?: HolderRow[] },
+        holdersData,
         limit,
         page,
         sortByAsc,
         sortByDesc
       );
+      renderCharts(tokenData, holdersData, (page + 1) * limit);
     }
     else showSectionError(holdersError, `Failed (${holdersRes.status})`);
   } catch {
     showSectionError(holdersError, 'Failed');
+    hideChartsPanel();
   } finally {
     fetchAllBtn.disabled = false;
     loadingIndicator.hidden = true;

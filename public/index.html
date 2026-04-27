@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solana Top Token Holders & Whales</title>
-  <link rel="stylesheet" href="app.css?v=4" />
+  <link rel="stylesheet" href="app.css?v=5" />
 </head>
 <body>
   <div class="container">
@@ -126,6 +126,30 @@
           </div>
         </div>
         <div class="token-stats-groups" id="tokenStats"></div>
+      </div>
+    </section>
+
+    <section class="panel token-supply-panel" id="tokenSupplyPanel" hidden>
+      <div class="token-supply-grid">
+        <div class="token-supply-card">
+          <div class="section-header">
+            <h2>Top wallets supply vs total supply</h2>
+          </div>
+          <div class="token-supply-wrap">
+            <div class="token-supply-pie" id="tokenSupplyPie" aria-label="Supply distribution pie chart"></div>
+            <div class="token-supply-legend" id="tokenSupplyLegend"></div>
+          </div>
+        </div>
+
+        <div class="token-supply-card">
+          <div class="section-header token-supply-subheader">
+            <h2>Labeled vs unlabeled total supply</h2>
+          </div>
+          <div class="token-supply-wrap">
+            <div class="token-supply-pie" id="tokenLabelSupplyPie" aria-label="Labeled vs unlabeled total supply pie chart"></div>
+            <div class="token-supply-legend" id="tokenLabelSupplyLegend"></div>
+          </div>
+        </div>
       </div>
     </section>
 
