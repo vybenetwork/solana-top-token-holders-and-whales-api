@@ -134,10 +134,47 @@ function isLabeledHolder(row: HolderRow): boolean {
   return labels.some((label) => String(label).trim() !== '');
 }
 
-function hideChartsPanel(): void {
-  tokenSupplyPanel.hidden = true;
-  tokenSupplyLegend.innerHTML = '';
-  tokenLabelSupplyLegend.innerHTML = '';
+function getTopFetchedCount(): number {
+  const limitRaw = Number(limitSelect.value);
+  const limit = Number.isFinite(limitRaw) && limitRaw >= 0 ? Math.floor(limitRaw) : 1000;
+  const pageRaw = Number(pageInput.value);
+  const page = Number.isFinite(pageRaw) && pageRaw >= 0 ? Math.floor(pageRaw) : 0;
+  return (page + 1) * limit;
+}
+
+function renderLegendPlaceholderItem(label: string, color: string): string {
+  const d = '—';
+  return `<div class="token-supply-legend-item">
+    <span class="token-supply-legend-swatch" style="background:${color}"></span>
+    <div class="token-supply-legend-content">
+      <div class="token-supply-legend-label">${label}</div>
+      <ul class="token-supply-legend-sublist">
+        <li><span class="token-supply-legend-pct">${d}</span> <span class="token-supply-legend-token">(${d} • </span><span class="token-supply-legend-usd">${d}</span><span class="token-supply-legend-token">)</span></li>
+      </ul>
+    </div>
+  </div>`;
+}
+
+function setChartsPlaceholder(): void {
+  tokenSupplyPanel.hidden = false;
+  const empty4 = buildPieGradientWithGaps([0, 0, 0, 0], ['#3b82f6', '#2563eb', '#1d4ed8', '#27272a']);
+  const empty3 = buildPieGradientWithGaps([0, 0, 0], ['#3b82f6', '#1d4ed8', '#27272a']);
+  tokenSupplyPie.style.background = empty4;
+  tokenLabelSupplyPie.style.background = empty3;
+  const topFetched = getTopFetchedCount();
+  const topFetchedLabel = topFetched.toLocaleString();
+  const showTop101Bucket = topFetched >= 250;
+  tokenSupplyLegend.innerHTML = `
+    ${renderLegendPlaceholderItem('Top 10 wallets', '#3b82f6')}
+    ${renderLegendPlaceholderItem('Top 11-100 wallets', '#2563eb')}
+    ${showTop101Bucket ? renderLegendPlaceholderItem(`Top 101-${topFetchedLabel} wallets`, '#1d4ed8') : ''}
+    ${renderLegendPlaceholderItem('Remaining supply', '#27272a')}
+  `;
+  tokenLabelSupplyLegend.innerHTML = `
+    ${renderLegendPlaceholderItem(`Labeled top ${topFetchedLabel} supply`, '#3b82f6')}
+    ${renderLegendPlaceholderItem(`Unlabeled top ${topFetchedLabel} supply`, '#1d4ed8')}
+    ${renderLegendPlaceholderItem(`Non-top ${topFetchedLabel} supply`, '#27272a')}
+  `;
 }
 
 function renderLegendDetails(balance: number, usdValue: number, symbol: string): { token: string; usd: string } {
@@ -354,6 +391,71 @@ interface SectionSpec {
   rows: [string, string | number | undefined][];
 }
 
+let holdersLoadedSuccessfully = false;
+
+function tokenStatsSectionHtml(s: SectionSpec): string {
+  return `<section class="token-stats-group">
+      <h3 class="token-stats-group-title">${s.icon}<span>${s.title}</span></h3>
+      <dl class="token-stats">${s.rows.map(([label, value]) => `<dt>${label}</dt><dd>${value ?? '—'}</dd>`).join('')}</dl>
+    </section>`;
+}
+
+function renderTokenPlaceholder(): void {
+  tokenLogo.src = '';
+  tokenLogo.alt = '';
+  tokenLogo.style.display = 'none';
+  tokenSymbol.textContent = '—';
+  tokenName.textContent = '—';
+  const d = '—';
+  const overview: SectionSpec = {
+    icon: tokenSectionIcons.overview,
+    title: 'Overview',
+    rows: [
+      ['Mint', d],
+      ['Symbol', d],
+      ['Decimals', d],
+      ['Category', d],
+      ['Subcategory', d],
+      ['Verified', d],
+    ],
+  };
+  const priceSection: SectionSpec = {
+    icon: tokenSectionIcons.price,
+    title: 'Price & market cap',
+    rows: [
+      ['Price (USD)', d],
+      ['Market cap', d],
+      ['Price (1d ago)', d],
+      ['Price (7d ago)', d],
+    ],
+  };
+  const supplyVolumeSection: SectionSpec = {
+    icon: tokenSectionIcons.supply,
+    title: 'Supply & volume (24h)',
+    rows: [
+      ['Current supply', d],
+      ['Token volume (24h)', d],
+      ['USD volume (24h)', d],
+    ],
+  };
+  const metaSection: SectionSpec = {
+    icon: tokenSectionIcons.meta,
+    title: 'Last updated',
+    rows: [['Update time', d]],
+  };
+  tokenStats.innerHTML =
+    tokenStatsSectionHtml(overview) +
+    `<div class="token-stats-row"><div class="token-stats-col">${tokenStatsSectionHtml(priceSection)}</div><div class="token-stats-col">${tokenStatsSectionHtml(supplyVolumeSection)}</div></div>` +
+    tokenStatsSectionHtml(metaSection);
+}
+
+function renderHoldersPlaceholder(): void {
+  holdersTitle.textContent = '—';
+  holdersMeta.textContent = '—';
+  holdersBody.innerHTML =
+    '<tr><td>—</td><td>—</td><td>—</td><td class="holders-value-usd">—</td><td style="text-align:right">—</td></tr>';
+}
+
 function showSectionError(el: HTMLElement, msg: string): void {
   el.textContent = msg;
   el.hidden = false;
@@ -387,11 +489,6 @@ function renderToken(t: TokenData): void {
   tokenLogo.style.display = t.logoUrl ? 'block' : 'none';
   tokenSymbol.textContent = t.symbol || '—';
   tokenName.textContent = t.name || t.mintAddress || '—';
-
-  const sectionHtml = (s: SectionSpec): string => `<section class="token-stats-group">
-      <h3 class="token-stats-group-title">${s.icon}<span>${s.title}</span></h3>
-      <dl class="token-stats">${s.rows.map(([label, value]) => `<dt>${label}</dt><dd>${value ?? '—'}</dd>`).join('')}</dl>
-    </section>`;
 
   const sym = (t.symbol || '').toUpperCase();
   const formatUpdateTime = (ts: number | undefined): string => {
@@ -448,9 +545,9 @@ function renderToken(t: TokenData): void {
   };
 
   tokenStats.innerHTML =
-    sectionHtml(overview) +
-    `<div class="token-stats-row"><div class="token-stats-col">${sectionHtml(priceSection)}</div><div class="token-stats-col">${sectionHtml(supplyVolumeSection)}</div></div>` +
-    sectionHtml(metaSection);
+    tokenStatsSectionHtml(overview) +
+    `<div class="token-stats-row"><div class="token-stats-col">${tokenStatsSectionHtml(priceSection)}</div><div class="token-stats-col">${tokenStatsSectionHtml(supplyVolumeSection)}</div></div>` +
+    tokenStatsSectionHtml(metaSection);
 }
 
 function getSortSummary(sortByAsc: string, sortByDesc: string): { field: string; direction: 'asc' | 'desc' } {
@@ -499,6 +596,11 @@ function syncHoldersCopyWithFilters(limit: number, page: number, sortByAsc: stri
 }
 
 function syncHoldersCopyFromInputs(): void {
+  if (!holdersLoadedSuccessfully) {
+    holdersTitle.textContent = '—';
+    holdersMeta.textContent = '—';
+    return;
+  }
   const limitRaw = Number(limitSelect.value);
   const limit = Number.isFinite(limitRaw) && limitRaw >= 0 ? Math.floor(limitRaw) : 1000;
   const pageRaw = Number(pageInput.value);
@@ -537,7 +639,11 @@ async function loadData(): Promise<void> {
   const limit = Number.isFinite(limitRaw) && limitRaw >= 0 ? Math.floor(limitRaw) : 1000;
   const sortByAsc = sortByAscSelect.value.trim();
   const sortByDesc = sortByDescSelect.value.trim();
-  syncHoldersCopyWithFilters(limit, page, sortByAsc, sortByDesc);
+
+  holdersLoadedSuccessfully = false;
+  renderTokenPlaceholder();
+  renderHoldersPlaceholder();
+  setChartsPlaceholder();
 
   hideSectionError(tokenSectionError);
   hideSectionError(holdersError);
@@ -545,7 +651,6 @@ async function loadData(): Promise<void> {
   loadingIndicator.hidden = false;
   tokenSectionLoading.hidden = false;
   holdersLoading.hidden = false;
-  hideChartsPanel();
 
   try {
     let tokenData: TokenData | null = null;
@@ -575,12 +680,16 @@ async function loadData(): Promise<void> {
         sortByAsc,
         sortByDesc
       );
+      holdersLoadedSuccessfully = true;
       renderCharts(tokenData, holdersData, (page + 1) * limit);
     }
     else showSectionError(holdersError, `Failed (${holdersRes.status})`);
   } catch {
     showSectionError(holdersError, 'Failed');
-    hideChartsPanel();
+    holdersLoadedSuccessfully = false;
+    renderTokenPlaceholder();
+    renderHoldersPlaceholder();
+    setChartsPlaceholder();
   } finally {
     fetchAllBtn.disabled = false;
     loadingIndicator.hidden = true;
@@ -607,11 +716,17 @@ sortByDescSelect.addEventListener('change', () => {
 
 limitSelect.addEventListener('change', () => {
   syncHoldersCopyFromInputs();
+  if (!holdersLoadedSuccessfully) setChartsPlaceholder();
 });
 
 applySortLockState();
+holdersLoadedSuccessfully = false;
+renderTokenPlaceholder();
+renderHoldersPlaceholder();
+setChartsPlaceholder();
 syncHoldersCopyFromInputs();
 
 pageInput.addEventListener('input', () => {
   syncHoldersCopyFromInputs();
+  if (!holdersLoadedSuccessfully) setChartsPlaceholder();
 });

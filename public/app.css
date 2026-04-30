@@ -595,7 +595,8 @@ button:disabled {
   text-decoration: none;
 }
 
-.token-supply-panel h2 {
+.token-supply-panel h2,
+.token-supply-panel .token-stats-group-title {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -721,6 +722,14 @@ button:disabled {
   font-size: 0.85rem;
   color: #a1a1aa;
   margin: 0 0 0.75rem 0;
+}
+
+.meta.token-supply-card-desc {
+  margin: 0 0 24px 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  font-weight: 400;
+  color: #d4d4d8;
 }
 
 .trades-summary-grid {
