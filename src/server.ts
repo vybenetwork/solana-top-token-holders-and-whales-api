@@ -43,7 +43,14 @@ const app = express();
 const client = createClient(apiKey);
 
 app.use(express.json());
-app.use(express.static(PUBLIC_DIR));
+app.use(
+  express.static(PUBLIC_DIR, {
+    setHeaders(res) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+    },
+  }),
+);
 
 function param(req: Request, key: string): string {
   const v = req.params[key] ?? req.query[key];

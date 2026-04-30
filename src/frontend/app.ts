@@ -56,6 +56,14 @@ const holdersBody = document.getElementById('holdersBody') as HTMLElement;
 const MAX_FETCH_RETRIES = 5;
 const FETCH_RETRY_DELAY_MS = 2000;
 
+const HOLDERS_PLACEHOLDER_ROW_COUNT = 12;
+
+function buildHoldersPlaceholderRowsHtml(): string {
+  const row =
+    '<tr><td>—</td><td>—</td><td>—</td><td class="holders-value-usd">—</td><td style="text-align:right">—</td></tr>';
+  return Array.from({ length: HOLDERS_PLACEHOLDER_ROW_COUNT }, () => row).join('');
+}
+
 function truncateAddress(addr: string | undefined): string {
   if (!addr || addr.length <= 12) return addr ?? '';
   return `${addr.slice(0, 4)}....${addr.slice(-4)}`;
@@ -388,13 +396,14 @@ const tokenSectionIcons: Record<string, string> = {
 interface SectionSpec {
   icon: string;
   title: string;
+  theme: 'overview' | 'price' | 'supply' | 'meta';
   rows: [string, string | number | undefined][];
 }
 
 let holdersLoadedSuccessfully = false;
 
 function tokenStatsSectionHtml(s: SectionSpec): string {
-  return `<section class="token-stats-group">
+  return `<section class="token-stats-group token-stats-group--${s.theme}">
       <h3 class="token-stats-group-title">${s.icon}<span>${s.title}</span></h3>
       <dl class="token-stats">${s.rows.map(([label, value]) => `<dt>${label}</dt><dd>${value ?? '—'}</dd>`).join('')}</dl>
     </section>`;
@@ -410,8 +419,9 @@ function renderTokenPlaceholder(): void {
   const overview: SectionSpec = {
     icon: tokenSectionIcons.overview,
     title: 'Overview',
+    theme: 'overview',
     rows: [
-      ['Mint', d],
+      ['Mint', `<span class="mono">${d}</span>`],
       ['Symbol', d],
       ['Decimals', d],
       ['Category', d],
@@ -422,6 +432,7 @@ function renderTokenPlaceholder(): void {
   const priceSection: SectionSpec = {
     icon: tokenSectionIcons.price,
     title: 'Price & market cap',
+    theme: 'price',
     rows: [
       ['Price (USD)', d],
       ['Market cap', d],
@@ -432,6 +443,7 @@ function renderTokenPlaceholder(): void {
   const supplyVolumeSection: SectionSpec = {
     icon: tokenSectionIcons.supply,
     title: 'Supply & volume (24h)',
+    theme: 'supply',
     rows: [
       ['Current supply', d],
       ['Token volume (24h)', d],
@@ -441,6 +453,7 @@ function renderTokenPlaceholder(): void {
   const metaSection: SectionSpec = {
     icon: tokenSectionIcons.meta,
     title: 'Last updated',
+    theme: 'meta',
     rows: [['Update time', d]],
   };
   tokenStats.innerHTML =
@@ -452,8 +465,7 @@ function renderTokenPlaceholder(): void {
 function renderHoldersPlaceholder(): void {
   holdersTitle.textContent = '—';
   holdersMeta.textContent = '—';
-  holdersBody.innerHTML =
-    '<tr><td>—</td><td>—</td><td>—</td><td class="holders-value-usd">—</td><td style="text-align:right">—</td></tr>';
+  holdersBody.innerHTML = buildHoldersPlaceholderRowsHtml();
 }
 
 function showSectionError(el: HTMLElement, msg: string): void {
@@ -510,6 +522,7 @@ function renderToken(t: TokenData): void {
   const overview: SectionSpec = {
     icon: tokenSectionIcons.overview,
     title: 'Overview',
+    theme: 'overview',
     rows: [
       ['Mint', mintLink],
       ['Symbol', sym || '—'],
@@ -522,6 +535,7 @@ function renderToken(t: TokenData): void {
   const priceSection: SectionSpec = {
     icon: tokenSectionIcons.price,
     title: 'Price & market cap',
+    theme: 'price',
     rows: [
       ['Price (USD)', t.price != null ? `${formatPrice(t.price)} USD` : '—'],
       ['Market cap', t.marketCap != null ? `${formatNum(t.marketCap)} USD` : '—'],
@@ -532,6 +546,7 @@ function renderToken(t: TokenData): void {
   const supplyVolumeSection: SectionSpec = {
     icon: tokenSectionIcons.supply,
     title: 'Supply & volume (24h)',
+    theme: 'supply',
     rows: [
       ['Current supply', t.currentSupply != null ? `${formatNum(t.currentSupply)}${sym ? ` ${sym}` : ''}` : '—'],
       ['Token volume (24h)', t.tokenAmountVolume24h != null ? `${formatNum(t.tokenAmountVolume24h)}${sym ? ` ${sym}` : ''}` : '—'],
@@ -541,6 +556,7 @@ function renderToken(t: TokenData): void {
   const metaSection: SectionSpec = {
     icon: tokenSectionIcons.meta,
     title: 'Last updated',
+    theme: 'meta',
     rows: [['Update time', formatUpdateTime(t.updateTime)]],
   };
 
@@ -585,7 +601,7 @@ function renderHolders(
         <td style="text-align:right">${formatSupplyPercent(h.percentageOfSupplyHeld)}</td>
       </tr>`;
     }).join('')
-    : '<tr><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>';
+    : buildHoldersPlaceholderRowsHtml();
 }
 
 function syncHoldersCopyWithFilters(limit: number, page: number, sortByAsc: string, sortByDesc: string): void {

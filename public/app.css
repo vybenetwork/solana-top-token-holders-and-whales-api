@@ -252,7 +252,6 @@ header h1 {
   align-items: center;
   justify-content: flex-start;
   flex-wrap: wrap;
-  padding-bottom: 20px;
 }
 
 .section-header h2 {
@@ -549,6 +548,13 @@ button:disabled {
   border-radius: 6px;
 }
 
+/* Includes cards inside .token-stats-row columns (price / supply). */
+.token-stats-groups .token-stats-group,
+.holders-table-card {
+  position: relative;
+  overflow: hidden;
+}
+
 .token-stats-group-title {
   display: inline-flex;
   align-items: center;
@@ -564,8 +570,23 @@ button:disabled {
 .token-stats-group-title .section-icon {
   width: 1rem;
   height: 1rem;
-  color: #3b82f6;
   flex-shrink: 0;
+}
+
+.token-stats-group--overview .token-stats-group-title .section-icon {
+  color: #f59e0b;
+}
+
+.token-stats-group--price .token-stats-group-title .section-icon {
+  color: #38bdf8;
+}
+
+.token-stats-group--supply .token-stats-group-title .section-icon {
+  color: #34d399;
+}
+
+.token-stats-group--meta .token-stats-group-title .section-icon {
+  color: #a78bfa;
 }
 
 .token-stats {
@@ -595,10 +616,10 @@ button:disabled {
   text-decoration: none;
 }
 
-.token-supply-panel h2,
-.token-supply-panel .token-stats-group-title {
+.token-supply-panel h2 {
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  margin: 0;
 }
 
 .token-supply-subheader {
@@ -612,10 +633,74 @@ button:disabled {
 }
 
 .token-supply-card {
+  position: relative;
   background: #0f0f12;
   border: 1px solid #27272a;
   border-radius: 8px;
   padding: 1rem;
+  overflow: hidden;
+}
+
+/* Left accent stripe */
+.token-supply-card::before,
+.token-stats-groups .token-stats-group::before,
+.holders-table-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+.token-supply-card::before {
+  border-radius: 8px 0 0 8px;
+  background: linear-gradient(180deg, #60a5fa, #34d399);
+}
+
+.holders-table-card::before {
+  border-radius: 6px 0 0 6px;
+  background: linear-gradient(180deg, #60a5fa, #34d399);
+}
+
+.token-stats-groups .token-stats-group::before {
+  border-radius: 6px 0 0 6px;
+}
+
+.token-stats-group--overview::before {
+  background: linear-gradient(180deg, #fbbf24, #d97706);
+}
+
+.token-stats-group--price::before {
+  background: linear-gradient(180deg, #38bdf8, #2563eb);
+}
+
+.token-stats-group--supply::before {
+  background: linear-gradient(180deg, #34d399, #0d9488);
+}
+
+.token-stats-group--meta::before {
+  background: linear-gradient(180deg, #a78bfa, #6366f1);
+}
+
+.holders-section .holders-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.holders-table-card .token-stats-group-title {
+  margin-bottom: 0.65rem;
+}
+
+.holders-table-card .table-wrap thead th {
+  background: #0f0f12;
+}
+
+.holders-table-card tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 @media (max-width: 1100px) {

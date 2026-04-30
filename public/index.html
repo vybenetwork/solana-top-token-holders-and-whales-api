@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solana Top Token Holders & Whales</title>
-  <link rel="stylesheet" href="app.css?v=11" />
+  <link rel="stylesheet" href="app.css?v=13" />
 </head>
 <body>
   <div class="container">
@@ -129,10 +129,12 @@
       </div>
     </section>
 
-    <section class="panel token-supply-panel" id="tokenSupplyPanel">
+    <section class="panel token-supply-panel" id="tokenSupplyPanel" hidden>
       <div class="token-supply-grid">
         <div class="token-supply-card">
-          <h3 class="token-stats-group-title"><span>Top wallets supply vs total supply</span></h3>
+          <div class="section-header">
+            <h2>Top wallets supply vs total supply</h2>
+          </div>
           <p class="meta token-supply-card-desc">Each slice is a share of circulating supply held by the top 10, top 11–100, extended top cohort, and all remaining wallets.</p>
           <div class="token-supply-wrap">
             <div class="token-supply-pie" id="tokenSupplyPie" aria-label="Supply distribution pie chart"></div>
@@ -141,7 +143,9 @@
         </div>
 
         <div class="token-supply-card">
-          <h3 class="token-stats-group-title token-supply-subheader"><span>Labeled vs unlabeled total supply</span></h3>
+          <div class="section-header token-supply-subheader">
+            <h2>Labeled vs unlabeled total supply</h2>
+          </div>
           <p class="meta token-supply-card-desc">Vybe-labeled wallets versus anonymous addresses within the fetched top holders, plus supply outside that group.</p>
           <div class="token-supply-wrap">
             <div class="token-supply-pie" id="tokenLabelSupplyPie" aria-label="Labeled vs unlabeled total supply pie chart"></div>
@@ -153,7 +157,7 @@
 
     <section class="holders-section panel" id="holdersSection">
       <div class="section-header">
-        <h2 id="holdersTitle">—</h2>
+        <h2 id="holdersTitle">Top 1000 holders (by % supply)</h2>
         <div class="section-loading" id="holdersLoading" hidden aria-hidden="true">
           <span class="loading-spinner"></span>
           <span class="loading-text">Loading…</span>
@@ -161,20 +165,23 @@
         <span class="section-error" id="holdersError" hidden aria-hidden="true"></span>
       </div>
       <div class="holders-content" id="holdersContentWrap">
-        <p class="meta" id="holdersMeta">—</p>
-        <div class="table-wrap">
-          <table id="holdersTable">
-            <thead>
-              <tr>
-                <th style="text-align: left">Rank</th>
-                <th style="text-align: left">Owner</th>
-                <th style="text-align: left">Balance</th>
-                <th style="text-align: right">Value (USD)</th>
-                <th style="text-align: right">% supply</th>
-              </tr>
-            </thead>
-            <tbody id="holdersBody"></tbody>
-          </table>
+        <p class="meta" id="holdersMeta"></p>
+        <div class="token-stats-group holders-table-card">
+          <h3 class="token-stats-group-title"><span>Top holders</span></h3>
+          <div class="table-wrap">
+            <table id="holdersTable">
+              <thead>
+                <tr>
+                  <th style="text-align: left">Rank</th>
+                  <th style="text-align: left">Owner</th>
+                  <th style="text-align: left">Balance</th>
+                  <th style="text-align: right">Value (USD)</th>
+                  <th style="text-align: right">% supply</th>
+                </tr>
+              </thead>
+              <tbody id="holdersBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -184,6 +191,6 @@
       <pre id="errorText"></pre>
     </section>
   </div>
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
