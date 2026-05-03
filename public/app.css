@@ -2,6 +2,21 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+:root {
+  --token-pnl-positive-from: #16a34a;
+  --token-pnl-positive-to: #4ade80;
+}
+
+html {
+  overflow-x: auto;
+  scrollbar-color: #71717a #000000;
+  scrollbar-width: thin;
+}
+
 body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   margin: 0;
@@ -9,6 +24,7 @@ body {
   background: #0f0f12;
   color: #e4e4e7;
   min-height: 100vh;
+  min-width: 1100px;
 }
 
 .container {
@@ -524,17 +540,6 @@ button:disabled {
   align-items: stretch;
 }
 
-@media (max-width: 640px) {
-  .token-stats-row {
-    grid-template-columns: 1fr;
-  }
-
-  #mint {
-    min-width: 100%;
-    max-width: 100%;
-  }
-}
-
 .token-stats-col {
   display: flex;
   flex-direction: column;
@@ -565,6 +570,11 @@ button:disabled {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 0 0 0.75rem 0;
+}
+
+.section-header > h2.token-stats-group-title {
+  display: flex;
+  margin-bottom: 0.5rem;
 }
 
 .token-stats-group-title .section-icon {
@@ -678,7 +688,7 @@ button:disabled {
 .token-supply-card::before {
   width: 3px;
   border-radius: 8px 0 0 8px;
-  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  background: linear-gradient(180deg, #60a5fa, #34d399);
 }
 
 .holders-table-card::before {
@@ -724,12 +734,6 @@ button:disabled {
   background: rgba(255, 255, 255, 0.04);
 }
 
-@media (max-width: 1100px) {
-  .token-supply-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .token-supply-wrap {
   display: flex;
   gap: 2rem;
@@ -746,11 +750,16 @@ button:disabled {
   flex: 0 0 auto;
   border-radius: 50%;
   border: none;
+  transform: translateZ(0);
+  isolation: isolate;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.08),
     0 0 0 1px rgba(0, 0, 0, 0.55) inset,
+    0 0 0.65px rgba(0, 0, 0, 0.45),
     0 10px 32px rgba(0, 0, 0, 0.5);
-  background: conic-gradient(#3b82f6 0deg 0deg, #2563eb 0deg 0deg, #1d4ed8 0deg 0deg, #27272a 0deg 360deg);
+  background: #1a1a1f;
 }
 
 .token-supply-pie::after {
@@ -764,6 +773,14 @@ button:disabled {
     inset 0 2px 5px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(255, 255, 255, 0.05);
   pointer-events: none;
+}
+
+.token-supply-pie--donut-labels {
+  overflow: visible;
+}
+
+.token-supply-card:has(.token-supply-pie--donut-labels) {
+  overflow: visible;
 }
 
 .token-supply-legend {
@@ -847,12 +864,6 @@ button:disabled {
 
 .trades-summary-programs-fullrow {
   grid-column: 1 / -1;
-}
-
-@media (max-width: 900px) {
-  .trades-summary-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .trades-summary-block {
@@ -1079,12 +1090,6 @@ td .mono {
   color: #86efac;
 }
 
-/* Scrollbar: black track, grey thumb */
-html {
-  scrollbar-color: #71717a #000000; /* thumb, track */
-  scrollbar-width: thin;
-}
-
 *::-webkit-scrollbar {
   width: 10px;
 }
@@ -1098,4 +1103,556 @@ html {
 *::-webkit-scrollbar-thumb {
   background-color: #71717a;
   border-radius: 999px;
+}
+
+/* Dashboard layout + charts (aligned with top-traders token supply UI) */
+.token-supply-grid--trade-count-pie-row {
+  grid-template-columns: 1fr;
+  margin-bottom: 0.25rem;
+}
+
+.token-supply-grid--section-gap {
+  margin-bottom: 1.15rem;
+}
+
+.token-supply-card--fullwidth {
+  grid-column: 1 / -1;
+}
+
+.token-supply-card--trade-tier-dash {
+  overflow: visible;
+}
+
+.token-trade-tier-dash__main {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  gap: 1.25rem 1.5rem;
+  align-items: start;
+}
+
+.token-trade-tier-dash__chart-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: visible;
+  padding-top: 12px;
+  padding-bottom: 8px;
+}
+
+.token-trade-tier-dash__legend-col {
+  min-width: 0;
+}
+
+.token-supply-wrap--trade-tier-pie {
+  justify-content: center;
+  flex-wrap: nowrap;
+  margin-top: 0.25rem;
+  padding: 0.45rem min(5.5vw, 22px);
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+.token-trade-tier-dash__chart-title {
+  margin: 0 0 0.35rem;
+}
+
+.token-trade-tier-dash__chart-note.meta.token-supply-card-desc {
+  margin: 0 0 0.65rem;
+}
+
+.token-supply-legend--compact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0.65rem;
+  row-gap: 1rem;
+  font-size: 0.72rem;
+  min-width: 0;
+  flex: 1 1 200px;
+}
+
+.token-supply-legend--compact-grid .token-supply-legend-item {
+  gap: 0.45rem;
+  align-items: flex-start;
+}
+
+.token-supply-legend--compact-grid .token-supply-legend-swatch {
+  width: 9px;
+  height: 9px;
+  margin-top: 0.15em;
+}
+
+.token-supply-legend--compact-grid .token-supply-legend-label {
+  font-size: 0.97em;
+  line-height: 1.25;
+  color: #a1a1aa;
+}
+
+.token-supply-legend--compact-grid .token-supply-legend-pct {
+  color: #e0f2fe;
+}
+
+.token-supply-legend--compact-grid .token-supply-legend-sublist {
+  font-size: 0.92em;
+  padding-left: 0.95rem;
+  line-height: 1.15;
+}
+
+.token-supply-legend--compact-grid .token-supply-legend-sublist li {
+  margin: 0;
+}
+
+.token-supply-legend--tier-dashboard.token-supply-legend--compact-grid {
+  column-gap: 0.75rem;
+  row-gap: 0.85rem;
+}
+
+.token-trade-tier-dash__holders-dist {
+  margin-top: 0.2rem;
+  padding-bottom: 0.75rem;
+}
+
+.token-trades-vertical-bars {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 0.65rem;
+  align-items: start;
+}
+
+.token-trades-vertical-bars--cols6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.token-trades-vertical-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.token-trades-vertical-track {
+  position: relative;
+  height: 200px;
+  border-radius: 10px;
+  background: #18181b;
+  border: 1px solid #27272a;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.token-trades-vertical-fill {
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+}
+
+.token-trades-vertical-count {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.78rem;
+  color: #f4f4f5;
+  font-weight: 600;
+  text-shadow:
+    0 0 2px rgba(0, 0, 0, 0.98),
+    0 1px 2px rgba(0, 0, 0, 0.9),
+    0 -1px 1px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.token-trades-vertical-label {
+  font-size: 0.74rem;
+  line-height: 1.2;
+  color: #d4d4d8;
+  text-align: center;
+  word-break: break-word;
+}
+
+.token-pnl-bar-fill--trade-scale {
+  background: linear-gradient(
+    180deg,
+    hsl(calc(120 - (var(--trade-grad-t, 0) * 120)) 85% 42%),
+    hsl(calc(120 - (var(--trade-grad-t, 0) * 120)) 92% 52%)
+  );
+}
+
+.wallet-pnl-pnl-trading-lede {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #a1a1aa;
+}
+
+.token-stat-price-pct {
+  font-size: 0.82em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.usd-tone--positive {
+  color: #4ade80;
+}
+
+.usd-tone--negative {
+  color: #f87171;
+}
+
+/* Pie legend tier cards (from top-traders) */
+.token-supply-legend--compact-grid.token-supply-legend--cols2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.token-supply-legend--compact-grid.token-supply-legend--cols3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.token-supply-legend--cols6 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.token-supply-legend--tier-dashboard.token-supply-legend--cols6 {
+  column-gap: 0.65rem;
+}
+
+.token-supply-legend--tier-dashboard .token-supply-legend-item--tier-dashboard {
+  min-width: 0;
+}
+
+.token-supply-legend--tier-dashboard .token-supply-legend-item {
+  align-items: stretch;
+}
+
+.token-tier-card {
+  background: linear-gradient(165deg, rgba(22, 22, 28, 0.98) 0%, rgba(11, 11, 14, 0.99) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem 0.6rem;
+  border-left: 3px solid var(--tier-accent, #38bdf8);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 10px 32px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.token-tier-card--placeholder {
+  opacity: 0.72;
+}
+
+.token-tier-card__title {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #f4f4f5;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  line-height: 1.25;
+}
+
+.token-tier-card__metrics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.36rem;
+}
+
+.token-tier-metric {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  font-size: 0.66rem;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.token-tier-metric__ico {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.token-tier-metric__ico--share-swatch {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.token-tier-metric__ico--share-swatch::before {
+  content: '';
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--tier-swatch, #38bdf8);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.token-tier-metric__ico--usd {
+  background: rgba(134, 239, 172, 0.1);
+  color: #86efac;
+  border: 1px solid rgba(134, 239, 172, 0.18);
+  font-size: 0.62rem;
+}
+
+.token-tier-metric__ico--volume {
+  background: rgba(125, 211, 252, 0.12);
+  color: #7dd3fc;
+  border: 1px solid rgba(125, 211, 252, 0.22);
+}
+
+.token-tier-metric__ico--people {
+  background: rgba(161, 161, 170, 0.12);
+  color: #a1a1aa;
+  border: 1px solid rgba(161, 161, 170, 0.15);
+}
+
+.token-tier-metric__svg {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
+
+.token-tier-metric__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.token-tier-metric__slice-pct {
+  color: #93c5fd;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.token-tier-metric__muted {
+  color: #a1a1aa;
+}
+
+.token-tier-metric__accent-usd {
+  color: #86efac;
+  font-weight: 600;
+}
+
+.token-tier-metric__accent-volume {
+  color: #7dd3fc;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.token-tier-metric__emph {
+  color: #e4e4e7;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.token-tier-metric__body--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.token-tier-metric__label {
+  display: block;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #71717a;
+  font-weight: 600;
+}
+
+.token-tier-metric__ratio {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #e0f2fe;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.token-tier-metric__ratio--vol-pnl-split {
+  font-size: unset;
+  font-weight: unset;
+  color: unset;
+  letter-spacing: unset;
+}
+
+.token-tier-metric__vol-pnl-slice-val {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #e0f2fe;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.token-tier-metric__vol-pnl-totalvol-suffix {
+  font-size: 0.58rem;
+  font-weight: 500;
+  color: #71717a;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.token-tier-metric--total {
+  margin-top: 0.12rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Concentration + Lorenz */
+.holders-concentration-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.85rem 1.25rem;
+  align-items: start;
+}
+
+.holders-conc-metric {
+  background: rgba(15, 15, 18, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+}
+
+.holders-conc-metric__label {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #71717a;
+  margin: 0 0 0.35rem;
+}
+
+.holders-conc-metric__value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #e0f2fe;
+  font-variant-numeric: tabular-nums;
+  margin: 0 0 0.45rem;
+}
+
+.holders-conc-bar-track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: #18181b;
+  border: 1px solid #27272a;
+  overflow: hidden;
+}
+
+.holders-conc-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
+}
+
+.holders-conc-gini {
+  grid-column: 1 / -1;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(96, 165, 250, 0.06);
+  border: 1px solid rgba(96, 165, 250, 0.15);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #d4d4d8;
+}
+
+.holders-conc-gini strong {
+  color: #93c5fd;
+  font-variant-numeric: tabular-nums;
+}
+
+.holders-lorenz-wrap {
+  margin-top: 0.35rem;
+  padding: 0.5rem 0;
+}
+
+.holders-lorenz-svg {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+}
+
+.holders-lorenz-fill {
+  opacity: 0.35;
+}
+
+.holders-lorenz-line {
+  fill: none;
+  stroke: #60a5fa;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.holders-lorenz-line--ref {
+  stroke: #71717a;
+  stroke-dasharray: 6 4;
+}
+
+/* Horizontal bar lists (labels + top wallets) */
+.holders-hbar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.35rem;
+}
+
+.holders-hbar-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) minmax(120px, 2.5fr) auto;
+  gap: 0.65rem 1rem;
+  align-items: center;
+  font-size: 0.78rem;
+}
+
+.holders-hbar-name {
+  color: #e4e4e7;
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.holders-hbar-name a {
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.holders-hbar-name a:hover {
+  text-decoration: underline;
+}
+
+.holders-hbar-track {
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  background: #18181b;
+  border: 1px solid #27272a;
+  overflow: hidden;
+}
+
+.holders-hbar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563eb, #34d399);
+}
+
+.holders-hbar-meta {
+  color: #a1a1aa;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.holders-hbar-meta .holders-value-usd {
+  margin-left: 0.35rem;
 }
