@@ -419,6 +419,65 @@ function renderConcentrationAndGini(rows: HolderRow[], topFetched: number): void
   `;
 }
 
+function renderLorenzAxisLines(
+  padL: number,
+  padT: number,
+  padB: number,
+  H: number,
+  pw: number,
+  ph: number
+): string {
+  const bottom = H - padB;
+  const left = padL;
+  const right = padL + pw;
+  const top = padT;
+  const tick = 5;
+  const fracTicks = [0, 0.25, 0.5, 0.75, 1];
+  let g = `<g class="holders-lorenz-axis-lines" aria-hidden="true">`;
+  g += `<line class="holders-lorenz-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" />`;
+  g += `<line class="holders-lorenz-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}" />`;
+  for (const t of fracTicks) {
+    const x = left + t * pw;
+    g += `<line class="holders-lorenz-axis-tick" x1="${x}" y1="${bottom}" x2="${x}" y2="${bottom + tick}" />`;
+  }
+  for (const t of fracTicks) {
+    const y = bottom - t * ph;
+    g += `<line class="holders-lorenz-axis-tick" x1="${left}" y1="${y}" x2="${left - tick}" y2="${y}" />`;
+  }
+  g += `</g>`;
+  return g;
+}
+
+function renderLorenzAxisLabels(
+  padL: number,
+  padT: number,
+  padB: number,
+  W: number,
+  H: number,
+  pw: number,
+  ph: number
+): string {
+  const bottom = H - padB;
+  const left = padL;
+  const fracTicks = [0, 0.25, 0.5, 0.75, 1];
+  let g = `<g class="holders-lorenz-axis-labels">`;
+  for (const t of fracTicks) {
+    const x = left + t * pw;
+    g += `<text class="holders-lorenz-axis-label" x="${x}" y="${bottom + 16}" text-anchor="middle">${Math.round(t * 100)}%</text>`;
+  }
+  for (const t of fracTicks) {
+    const y = bottom - t * ph;
+    g += `<text class="holders-lorenz-axis-label" x="${left - 8}" y="${y}" text-anchor="end" dominant-baseline="middle">${Math.round(t * 100)}%</text>`;
+  }
+  const cx = left + pw / 2;
+  g += `<text class="holders-lorenz-axis-title" x="${cx}" y="${H - 4}" text-anchor="middle">Cumulative share of holders (ranked)</text>`;
+  const midY = padT + ph / 2;
+  const titleX = 11;
+  g += `<text class="holders-lorenz-axis-title" x="${titleX}" y="${midY}" transform="rotate(-90 ${titleX} ${midY})" text-anchor="middle">Cumulative % of supply</text>`;
+  g += `</g>`;
+  return g;
+}
+
 function renderLorenzSvg(rows: HolderRow[], topFetched: number): void {
   const slice = rows.slice(0, Math.min(rows.length, topFetched));
   const sumPct = slice.reduce((s, r) => s + toFiniteNumber(r.percentageOfSupplyHeld), 0);
@@ -430,24 +489,29 @@ function renderLorenzSvg(rows: HolderRow[], topFetched: number): void {
   }
   const sorted = [...parts].sort((a, b) => a - b);
   const n = sorted.length;
-  const margin = 28;
   const W = 400;
-  const H = 240;
-  const pw = W - 2 * margin;
-  const ph = H - 2 * margin;
+  const H = 260;
+  const padL = 48;
+  const padR = 14;
+  const padT = 22;
+  const padB = 46;
+  const pw = W - padL - padR;
+  const ph = H - padT - padB;
   let cum = 0;
-  const pts: { x: number; y: number }[] = [{ x: margin, y: H - margin }];
+  const pts: { x: number; y: number }[] = [{ x: padL, y: H - padB }];
   for (let i = 0; i < n; i++) {
     cum += sorted[i];
     const xf = (i + 1) / n;
     const yf = cum / 100;
     pts.push({
-      x: margin + xf * pw,
-      y: H - margin - yf * ph,
+      x: padL + xf * pw,
+      y: H - padB - yf * ph,
     });
   }
   const pathD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
-  const fillPath = `${pathD} L ${margin + pw} ${H - margin} L ${margin} ${H - margin} Z`;
+  const fillPath = `${pathD} L ${padL + pw} ${H - padB} L ${padL} ${H - padB} Z`;
+  const axisLinesHtml = renderLorenzAxisLines(padL, padT, padB, H, pw, ph);
+  const axisLabelsHtml = renderLorenzAxisLabels(padL, padT, padB, W, H, pw, ph);
   holdersLorenzSvg.innerHTML = `
     <defs>
       <linearGradient id="lorenzFillGrad" x1="0" y1="1" x2="0" y2="0">
@@ -455,9 +519,11 @@ function renderLorenzSvg(rows: HolderRow[], topFetched: number): void {
         <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.28"/>
       </linearGradient>
     </defs>
+    ${axisLinesHtml}
     <path class="holders-lorenz-fill" d="${fillPath}" fill="url(#lorenzFillGrad)" />
-    <line class="holders-lorenz-line holders-lorenz-line--ref" x1="${margin}" y1="${H - margin}" x2="${margin + pw}" y2="${margin}" />
+    <line class="holders-lorenz-line holders-lorenz-line--ref" x1="${padL}" y1="${H - padB}" x2="${padL + pw}" y2="${padT}" />
     <path class="holders-lorenz-line" d="${pathD}" />
+    ${axisLabelsHtml}
   `;
 }
 
@@ -565,23 +631,15 @@ function renderTopLabelsBarsChart(rows: HolderRow[], topFetched: number): void {
   const slice = rows.slice(0, Math.min(rows.length, topFetched));
   const map = new Map<string, { pct: number; usd: number }>();
   for (const r of slice) {
-    const key = entityGroupKey(r);
+    const key = labeledWalletGroupKey(r);
     if (!key) continue;
     const cur = map.get(key) ?? { pct: 0, usd: 0 };
     cur.pct += toFiniteNumber(r.percentageOfSupplyHeld ?? null);
     cur.usd += toFiniteNumber(r.valueUsd ?? null);
     map.set(key, cur);
   }
-  const sorted = [...map.entries()].sort((a, b) => b[1].pct - a[1].pct);
-  const top = sorted.slice(0, 8);
-  let otherPct = 0;
-  let otherUsd = 0;
-  for (let i = 8; i < sorted.length; i++) {
-    otherPct += sorted[i][1].pct;
-    otherUsd += sorted[i][1].usd;
-  }
-  const rowsOut = top.map(([name, v]) => ({ name, ...v }));
-  if (otherPct > 0 || otherUsd > 0) rowsOut.push({ name: 'Other labeled', pct: otherPct, usd: otherUsd });
+  const sorted = [...map.entries()].sort((a, b) => b[1].pct - a[1].pct || a[0].localeCompare(b[0]));
+  const rowsOut = sorted.map(([name, v]) => ({ name, ...v }));
   const maxP = Math.max(0.01, ...rowsOut.map((r) => r.pct));
   holdersTopLabelsBars.innerHTML =
     rowsOut.length === 0
@@ -606,6 +664,21 @@ function entityGroupKey(row: HolderRow): string | null {
   const al = row.accountLabels?.map((x) => String(x).trim()).find(Boolean);
   const s = ol || al;
   return s || null;
+}
+
+/** First whitespace-delimited token; used to roll up labeled wallets into coarse groups. */
+function firstLabelSegment(full: string): string {
+  const t = full.trim();
+  if (!t) return '';
+  const m = t.match(/\S+/u);
+  return m ? m[0]! : '';
+}
+
+function labeledWalletGroupKey(row: HolderRow): string | null {
+  const full = entityGroupKey(row);
+  if (!full) return null;
+  const seg = firstLabelSegment(full);
+  return seg || null;
 }
 
 function renderTopWalletsBarsChart(rows: HolderRow[]): void {

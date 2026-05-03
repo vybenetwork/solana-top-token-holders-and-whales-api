@@ -1597,6 +1597,31 @@ td .mono {
   stroke-dasharray: 6 4;
 }
 
+.holders-lorenz-axis {
+  stroke: #52525b;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.holders-lorenz-axis-tick {
+  stroke: #52525b;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.holders-lorenz-axis-label {
+  fill: #a1a1aa;
+  font-size: 10px;
+  font-family: inherit;
+}
+
+.holders-lorenz-axis-title {
+  fill: #71717a;
+  font-size: 10px;
+  font-family: inherit;
+  font-weight: 500;
+}
+
 /* Horizontal bar lists (labels + top wallets) */
 .holders-hbar-list {
   display: flex;

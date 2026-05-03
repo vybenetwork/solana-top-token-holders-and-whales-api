@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solana Top Token Holders & Whales</title>
-  <link rel="stylesheet" href="app.css?v=16" />
+  <link rel="stylesheet" href="app.css?v=17" />
 </head>
 <body>
   <div class="container">
@@ -217,7 +217,7 @@
             <svg
               class="holders-lorenz-svg"
               id="holdersLorenzSvg"
-              viewBox="0 0 400 240"
+              viewBox="0 0 400 260"
               role="img"
               aria-label="Lorenz curve of supply shares"
             ></svg>
@@ -284,10 +284,10 @@
 
         <div class="token-supply-card token-supply-card--fullwidth token-supply-card--trade-tier-dash">
           <h3 class="token-stats-group-title token-trade-tier-dash__chart-title">
-            <span>Top labeled entities by combined supply</span>
+            <span>Labeled groups by combined supply</span>
           </h3>
           <p class="meta token-supply-card-desc token-trade-tier-dash__chart-note wallet-pnl-pnl-trading-lede">
-            Groups rows with a Vybe name or label; sums % supply and USD. Remaining labeled supply rolls into “Other labeled”.
+            Each wallet’s Vybe name or first label is split on whitespace; wallets sharing the same first token are summed (% supply and USD). Every group is listed, including a single wallet.
           </p>
           <div class="holders-hbar-list" id="holdersTopLabelsBars"></div>
         </div>
