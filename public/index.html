@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solana Top Token Holders & Whales</title>
-  <link rel="stylesheet" href="app.css?v=17" />
+  <link rel="stylesheet" href="app.css?v=18" />
 </head>
 <body>
   <div class="container">
@@ -206,24 +206,6 @@
           <div class="holders-concentration-inner" id="holdersConcentrationInner"></div>
         </div>
 
-        <div class="token-supply-card token-supply-card--fullwidth token-supply-card--trade-tier-dash holders-lorenz-card">
-          <h3 class="token-stats-group-title token-trade-tier-dash__chart-title">
-            <span>Lorenz curve (supply inequality)</span>
-          </h3>
-          <p class="meta token-supply-card-desc token-trade-tier-dash__chart-note wallet-pnl-pnl-trading-lede">
-            Cumulative supply share (y) vs share of ranked holders (x), smallest to largest slice. The dashed line is perfect equality.
-          </p>
-          <div class="holders-lorenz-wrap">
-            <svg
-              class="holders-lorenz-svg"
-              id="holdersLorenzSvg"
-              viewBox="0 0 400 260"
-              role="img"
-              aria-label="Lorenz curve of supply shares"
-            ></svg>
-          </div>
-        </div>
-
         <div class="token-supply-card token-supply-card--fullwidth token-supply-card--trade-tier-dash">
           <h3 class="token-stats-group-title token-trade-tier-dash__chart-title">
             <span>Holders by USD position size</span>
@@ -236,22 +218,6 @@
               class="token-trades-vertical-bars token-trades-vertical-bars--cols6"
               id="holdersUsdValueBars"
               aria-label="Holders by USD value band"
-            ></div>
-          </div>
-        </div>
-
-        <div class="token-supply-card token-supply-card--fullwidth token-supply-card--trade-tier-dash">
-          <h3 class="token-stats-group-title token-trade-tier-dash__chart-title">
-            <span>Holders by balance (vs median)</span>
-          </h3>
-          <p class="meta token-supply-card-desc token-trade-tier-dash__chart-note wallet-pnl-pnl-trading-lede">
-            Log-style bands relative to the median balance among fetched rows (helps tiny and whale tokens on one chart).
-          </p>
-          <div class="token-trade-tier-dash__holders-dist">
-            <div
-              class="token-trades-vertical-bars token-trades-vertical-bars--cols6"
-              id="holdersBalanceBars"
-              aria-label="Holders by balance band"
             ></div>
           </div>
         </div>
@@ -284,22 +250,12 @@
 
         <div class="token-supply-card token-supply-card--fullwidth token-supply-card--trade-tier-dash">
           <h3 class="token-stats-group-title token-trade-tier-dash__chart-title">
-            <span>Labeled groups by combined supply</span>
+            <span>Top 20 labeled groups by combined supply</span>
           </h3>
           <p class="meta token-supply-card-desc token-trade-tier-dash__chart-note wallet-pnl-pnl-trading-lede">
-            Each wallet’s Vybe name or first label is split on whitespace; wallets sharing the same first token are summed (% supply and USD). Every group is listed, including a single wallet.
+            Each wallet’s Vybe name or first label is split on whitespace (trailing “:” on that token is dropped); wallets sharing the same first token are summed (% supply and USD). Shows the top 20 groups; remaining labeled supply is rolled into “Other labeled”.
           </p>
           <div class="holders-hbar-list" id="holdersTopLabelsBars"></div>
-        </div>
-
-        <div class="token-supply-card token-supply-card--fullwidth token-supply-card--trade-tier-dash">
-          <h3 class="token-stats-group-title token-trade-tier-dash__chart-title">
-            <span>Top 10 wallets by % supply</span>
-          </h3>
-          <p class="meta token-supply-card-desc token-trade-tier-dash__chart-note wallet-pnl-pnl-trading-lede">
-            Largest holders in the current response (respects sort order when viewing other metrics).
-          </p>
-          <div class="holders-hbar-list" id="holdersTopWalletsBars"></div>
         </div>
       </div>
     </section>
@@ -340,6 +296,6 @@
       <pre id="errorText"></pre>
     </section>
   </div>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

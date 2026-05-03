@@ -50,13 +50,10 @@ const tokenLabelSupplyPie = document.getElementById('tokenLabelSupplyPie') as HT
 const tokenLabelSupplyLegend = document.getElementById('tokenLabelSupplyLegend') as HTMLElement;
 const holdersPctSupplyBars = document.getElementById('holdersPctSupplyBars') as HTMLElement;
 const holdersConcentrationInner = document.getElementById('holdersConcentrationInner') as HTMLElement;
-const holdersLorenzSvg = document.getElementById('holdersLorenzSvg') as HTMLElement;
 const holdersUsdValueBars = document.getElementById('holdersUsdValueBars') as HTMLElement;
-const holdersBalanceBars = document.getElementById('holdersBalanceBars') as HTMLElement;
 const holdersWhaleTierPie = document.getElementById('holdersWhaleTierPie') as HTMLElement;
 const holdersWhaleTierLegend = document.getElementById('holdersWhaleTierLegend') as HTMLElement;
 const holdersTopLabelsBars = document.getElementById('holdersTopLabelsBars') as HTMLElement;
-const holdersTopWalletsBars = document.getElementById('holdersTopWalletsBars') as HTMLElement;
 
 const TIER_LEGEND_SVG_USER =
   '<svg class="token-tier-metric__svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
@@ -117,12 +114,20 @@ function formatHistoricalPricePctVsSpotHtml(spot: number | undefined, historical
   return ` <span class="token-stat-price-pct ${toneClass}">${sign}${formatPctSmart(pct)}</span>`;
 }
 
+/** Scaled suffix (B/M/K): no decimals and thousands separators when |coefficient| > 999. */
+function formatCompactWithSuffix(value: number, divisor: number, suffix: string): string {
+  const v = value / divisor;
+  if (!Number.isFinite(v)) return `0${suffix}`;
+  if (Math.abs(v) > 999) return `${Math.round(v).toLocaleString('en-US')}${suffix}`;
+  return `${v.toFixed(2)}${suffix}`;
+}
+
 function formatNum(n: number | string | null | undefined): string {
   if (n == null) return '—';
   if (typeof n === 'number') {
-    if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
-    if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
-    if (n >= 1e3) return (n / 1e3).toFixed(2) + 'K';
+    if (n >= 1e9) return formatCompactWithSuffix(n, 1e9, 'B');
+    if (n >= 1e6) return formatCompactWithSuffix(n, 1e6, 'M');
+    if (n >= 1e3) return formatCompactWithSuffix(n, 1e3, 'K');
     return n.toFixed(4);
   }
   return String(n);
@@ -133,9 +138,9 @@ function formatBalance(n: number | string | null | undefined, symbol: string): s
   const num = Number(n);
   if (Number.isNaN(num)) return '—';
   const sym = symbol && String(symbol).trim() ? ` ${String(symbol).trim()}` : '';
-  if (num >= 1e9) return `${(num / 1e9).toFixed(2)}B${sym}`;
-  if (num >= 1e6) return `${(num / 1e6).toFixed(2)}M${sym}`;
-  if (num >= 10) return `${Math.round(num).toLocaleString()}${sym}`;
+  if (num >= 1e9) return `${formatCompactWithSuffix(num, 1e9, 'B')}${sym}`;
+  if (num >= 1e6) return `${formatCompactWithSuffix(num, 1e6, 'M')}${sym}`;
+  if (num >= 10) return `${Math.round(num).toLocaleString('en-US')}${sym}`;
   if (num >= 1) return `${num.toFixed(2).replace(/\.?0+$/, '')}${sym}`;
   if (num > 0) return `${num.toFixed(4).replace(/\.?0+$/, '')}${sym}`;
   return `0${sym}`;
@@ -272,12 +277,9 @@ function setChartsPlaceholder(): void {
     .join('');
   renderHoldersPctSupplyBars([], topFetched);
   renderConcentrationAndGini([], topFetched);
-  renderLorenzSvg([], topFetched);
   renderUsdValueBarsChart([], topFetched);
-  renderBalanceBandsChart([], topFetched);
   holdersTopLabelsBars.innerHTML =
     '<div class="holders-hbar-row"><span class="holders-hbar-name holders-hbar-meta">—</span><div class="holders-hbar-track"><div class="holders-hbar-fill" style="width:0%"></div></div><span class="holders-hbar-meta">—</span></div>';
-  holdersTopWalletsBars.innerHTML = holdersTopLabelsBars.innerHTML;
 }
 
 function formatPctSmart(value: number): string {
@@ -381,14 +383,6 @@ function computeGiniFromShares(values: number[]): number | null {
   return Math.max(0, Math.min(1, g));
 }
 
-function medianPositive(nums: number[]): number | null {
-  const pos = nums.filter((n) => n > 0);
-  if (pos.length === 0) return null;
-  const s = [...pos].sort((a, b) => a - b);
-  const m = Math.floor(s.length / 2);
-  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
-}
-
 function renderConcentrationAndGini(rows: HolderRow[], topFetched: number): void {
   const slice = rows.slice(0, Math.min(rows.length, topFetched));
   const thresholds = [10, 25, 100, 250, 1000];
@@ -416,114 +410,6 @@ function renderConcentrationAndGini(rows: HolderRow[], topFetched: number): void
       <strong>${g != null ? g.toFixed(3) : '—'}</strong>
       — from each holder’s % of supply plus a remainder bucket to reach 100%.
     </div>
-  `;
-}
-
-function renderLorenzAxisLines(
-  padL: number,
-  padT: number,
-  padB: number,
-  H: number,
-  pw: number,
-  ph: number
-): string {
-  const bottom = H - padB;
-  const left = padL;
-  const right = padL + pw;
-  const top = padT;
-  const tick = 5;
-  const fracTicks = [0, 0.25, 0.5, 0.75, 1];
-  let g = `<g class="holders-lorenz-axis-lines" aria-hidden="true">`;
-  g += `<line class="holders-lorenz-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" />`;
-  g += `<line class="holders-lorenz-axis" x1="${left}" y1="${bottom}" x2="${left}" y2="${top}" />`;
-  for (const t of fracTicks) {
-    const x = left + t * pw;
-    g += `<line class="holders-lorenz-axis-tick" x1="${x}" y1="${bottom}" x2="${x}" y2="${bottom + tick}" />`;
-  }
-  for (const t of fracTicks) {
-    const y = bottom - t * ph;
-    g += `<line class="holders-lorenz-axis-tick" x1="${left}" y1="${y}" x2="${left - tick}" y2="${y}" />`;
-  }
-  g += `</g>`;
-  return g;
-}
-
-function renderLorenzAxisLabels(
-  padL: number,
-  padT: number,
-  padB: number,
-  W: number,
-  H: number,
-  pw: number,
-  ph: number
-): string {
-  const bottom = H - padB;
-  const left = padL;
-  const fracTicks = [0, 0.25, 0.5, 0.75, 1];
-  let g = `<g class="holders-lorenz-axis-labels">`;
-  for (const t of fracTicks) {
-    const x = left + t * pw;
-    g += `<text class="holders-lorenz-axis-label" x="${x}" y="${bottom + 16}" text-anchor="middle">${Math.round(t * 100)}%</text>`;
-  }
-  for (const t of fracTicks) {
-    const y = bottom - t * ph;
-    g += `<text class="holders-lorenz-axis-label" x="${left - 8}" y="${y}" text-anchor="end" dominant-baseline="middle">${Math.round(t * 100)}%</text>`;
-  }
-  const cx = left + pw / 2;
-  g += `<text class="holders-lorenz-axis-title" x="${cx}" y="${H - 4}" text-anchor="middle">Cumulative share of holders (ranked)</text>`;
-  const midY = padT + ph / 2;
-  const titleX = 11;
-  g += `<text class="holders-lorenz-axis-title" x="${titleX}" y="${midY}" transform="rotate(-90 ${titleX} ${midY})" text-anchor="middle">Cumulative % of supply</text>`;
-  g += `</g>`;
-  return g;
-}
-
-function renderLorenzSvg(rows: HolderRow[], topFetched: number): void {
-  const slice = rows.slice(0, Math.min(rows.length, topFetched));
-  const sumPct = slice.reduce((s, r) => s + toFiniteNumber(r.percentageOfSupplyHeld), 0);
-  const rem = Math.max(0, 100 - sumPct);
-  const parts = [...slice.map((r) => toFiniteNumber(r.percentageOfSupplyHeld)), rem].filter((x) => x > 0);
-  if (parts.length === 0) {
-    holdersLorenzSvg.innerHTML = '';
-    return;
-  }
-  const sorted = [...parts].sort((a, b) => a - b);
-  const n = sorted.length;
-  const W = 400;
-  const H = 260;
-  const padL = 48;
-  const padR = 14;
-  const padT = 22;
-  const padB = 46;
-  const pw = W - padL - padR;
-  const ph = H - padT - padB;
-  let cum = 0;
-  const pts: { x: number; y: number }[] = [{ x: padL, y: H - padB }];
-  for (let i = 0; i < n; i++) {
-    cum += sorted[i];
-    const xf = (i + 1) / n;
-    const yf = cum / 100;
-    pts.push({
-      x: padL + xf * pw,
-      y: H - padB - yf * ph,
-    });
-  }
-  const pathD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
-  const fillPath = `${pathD} L ${padL + pw} ${H - padB} L ${padL} ${H - padB} Z`;
-  const axisLinesHtml = renderLorenzAxisLines(padL, padT, padB, H, pw, ph);
-  const axisLabelsHtml = renderLorenzAxisLabels(padL, padT, padB, W, H, pw, ph);
-  holdersLorenzSvg.innerHTML = `
-    <defs>
-      <linearGradient id="lorenzFillGrad" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stop-color="#2563eb" stop-opacity="0.06"/>
-        <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.28"/>
-      </linearGradient>
-    </defs>
-    ${axisLinesHtml}
-    <path class="holders-lorenz-fill" d="${fillPath}" fill="url(#lorenzFillGrad)" />
-    <line class="holders-lorenz-line holders-lorenz-line--ref" x1="${padL}" y1="${H - padB}" x2="${padL + pw}" y2="${padT}" />
-    <path class="holders-lorenz-line" d="${pathD}" />
-    ${axisLabelsHtml}
   `;
 }
 
@@ -564,45 +450,6 @@ function renderUsdValueBarsChart(rows: HolderRow[], topFetched: number): void {
     .join('');
 }
 
-function balanceBucketDefs(med: number): { label: string; contains: (b: number) => boolean }[] {
-  const m = med > 0 ? med : 1;
-  return [
-    { label: '<0.1× med', contains: (b) => b >= 0 && b < 0.1 * m },
-    { label: '0.1–1×', contains: (b) => b >= 0.1 * m && b < 1 * m },
-    { label: '1–10×', contains: (b) => b >= 1 * m && b < 10 * m },
-    { label: '10–100×', contains: (b) => b >= 10 * m && b < 100 * m },
-    { label: '100–1k×', contains: (b) => b >= 100 * m && b < 1000 * m },
-    { label: '1k×+', contains: (b) => b >= 1000 * m },
-  ];
-}
-
-function renderBalanceBandsChart(rows: HolderRow[], topFetched: number): void {
-  const slice = rows.slice(0, Math.min(rows.length, topFetched));
-  const bals = slice.map((r) => toFiniteNumber(r.balance ?? null));
-  const med = medianPositive(bals) ?? 1;
-  const defs = balanceBucketDefs(med);
-  const counts = defs.map(() => 0);
-  for (const b of bals) {
-    const idx = defs.findIndex((d) => d.contains(b));
-    if (idx >= 0) counts[idx] += 1;
-  }
-  const maxC = Math.max(1, ...counts);
-  holdersBalanceBars.innerHTML = defs
-    .map((d, i) => {
-      const c = counts[i];
-      const hPct = maxC > 0 ? Math.max(2, (c / maxC) * 100) : 2;
-      const t = defs.length > 1 ? i / (defs.length - 1) : 0;
-      return `<div class="token-trades-vertical-bar-item">
-        <div class="token-trades-vertical-track">
-          <div class="token-trades-vertical-fill token-pnl-bar-fill--trade-scale" style="height:${hPct}%;--trade-grad-t:${t}"></div>
-          <span class="token-trades-vertical-count">${c.toLocaleString()}</span>
-        </div>
-        <div class="token-trades-vertical-label">${d.label}</div>
-      </div>`;
-    })
-    .join('');
-}
-
 function aggregateWhaleTiers(rows: HolderRow[], topFetched: number): { pct: number; wallets: number; balance: number; usd: number }[] {
   const slice = rows.slice(0, Math.min(rows.length, topFetched));
   const tiers = [
@@ -627,6 +474,8 @@ function aggregateWhaleTiers(rows: HolderRow[], topFetched: number): { pct: numb
   return tiers;
 }
 
+const LABELED_GROUP_TOP_N = 20;
+
 function renderTopLabelsBarsChart(rows: HolderRow[], topFetched: number): void {
   const slice = rows.slice(0, Math.min(rows.length, topFetched));
   const map = new Map<string, { pct: number; usd: number }>();
@@ -639,7 +488,15 @@ function renderTopLabelsBarsChart(rows: HolderRow[], topFetched: number): void {
     map.set(key, cur);
   }
   const sorted = [...map.entries()].sort((a, b) => b[1].pct - a[1].pct || a[0].localeCompare(b[0]));
-  const rowsOut = sorted.map(([name, v]) => ({ name, ...v }));
+  const top = sorted.slice(0, LABELED_GROUP_TOP_N);
+  let otherPct = 0;
+  let otherUsd = 0;
+  for (let i = LABELED_GROUP_TOP_N; i < sorted.length; i++) {
+    otherPct += sorted[i][1].pct;
+    otherUsd += sorted[i][1].usd;
+  }
+  const rowsOut = top.map(([name, v]) => ({ name, ...v }));
+  if (otherPct > 0 || otherUsd > 0) rowsOut.push({ name: 'Other labeled', pct: otherPct, usd: otherUsd });
   const maxP = Math.max(0.01, ...rowsOut.map((r) => r.pct));
   holdersTopLabelsBars.innerHTML =
     rowsOut.length === 0
@@ -666,12 +523,18 @@ function entityGroupKey(row: HolderRow): string | null {
   return s || null;
 }
 
+/** Strip trailing colons from label tokens (e.g. "Exchange:" → "Exchange"). */
+function stripTrailingColonsFromToken(s: string): string {
+  return s.replace(/:+$/u, '');
+}
+
 /** First whitespace-delimited token; used to roll up labeled wallets into coarse groups. */
 function firstLabelSegment(full: string): string {
   const t = full.trim();
   if (!t) return '';
   const m = t.match(/\S+/u);
-  return m ? m[0]! : '';
+  const raw = m ? m[0]! : '';
+  return stripTrailingColonsFromToken(raw);
 }
 
 function labeledWalletGroupKey(row: HolderRow): string | null {
@@ -679,29 +542,6 @@ function labeledWalletGroupKey(row: HolderRow): string | null {
   if (!full) return null;
   const seg = firstLabelSegment(full);
   return seg || null;
-}
-
-function renderTopWalletsBarsChart(rows: HolderRow[]): void {
-  const sorted = [...rows]
-    .sort((a, b) => toFiniteNumber(b.percentageOfSupplyHeld) - toFiniteNumber(a.percentageOfSupplyHeld))
-    .slice(0, 10);
-  const maxP = Math.max(0.01, ...sorted.map((r) => toFiniteNumber(r.percentageOfSupplyHeld ?? null)));
-  holdersTopWalletsBars.innerHTML = sorted
-    .map((r) => {
-      const p = toFiniteNumber(r.percentageOfSupplyHeld ?? null);
-      const w = Math.min(100, (p / maxP) * 100);
-      const addr = r.ownerAddress ?? '';
-      const display = (r.ownerName ?? '').trim() || (addr ? truncateAddress(addr) : '—');
-      const link = addr
-        ? `<a href="https://vybe.fyi/wallets/${encodeURIComponent(addr)}" target="_blank" rel="noopener noreferrer" class="mono" title="${escapeHtmlText(addr)}">${escapeHtmlText(display)}</a>`
-        : escapeHtmlText(display);
-      return `<div class="holders-hbar-row">
-        <span class="holders-hbar-name">${link}</span>
-        <div class="holders-hbar-track"><div class="holders-hbar-fill" style="width:${w}%"></div></div>
-        <span class="holders-hbar-meta">${formatPctSmart(p)} <span class="holders-value-usd">${formatUsdHolderValue(r.valueUsd ?? null)}</span></span>
-      </div>`;
-    })
-    .join('');
 }
 
 function applyMinVisibleSlices(realSlices: number[], minVisiblePct = 1.5): number[] {
@@ -999,11 +839,8 @@ function renderCharts(token: TokenData | null, holdersData: { data?: HolderRow[]
 
   renderHoldersPctSupplyBars(rows, topFetched);
   renderConcentrationAndGini(rows, topFetched);
-  renderLorenzSvg(rows, topFetched);
   renderUsdValueBarsChart(rows, topFetched);
-  renderBalanceBandsChart(rows, topFetched);
   renderTopLabelsBarsChart(rows, topFetched);
-  renderTopWalletsBarsChart(rows);
 }
 
 const tokenSectionIcons: Record<string, string> = {

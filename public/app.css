@@ -1506,7 +1506,7 @@ td .mono {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Concentration + Lorenz */
+/* Concentration metrics */
 .holders-concentration-inner {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -1569,60 +1569,7 @@ td .mono {
   font-variant-numeric: tabular-nums;
 }
 
-.holders-lorenz-wrap {
-  margin-top: 0.35rem;
-  padding: 0.5rem 0;
-}
-
-.holders-lorenz-svg {
-  display: block;
-  width: 100%;
-  max-width: 520px;
-  height: auto;
-}
-
-.holders-lorenz-fill {
-  opacity: 0.35;
-}
-
-.holders-lorenz-line {
-  fill: none;
-  stroke: #60a5fa;
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-}
-
-.holders-lorenz-line--ref {
-  stroke: #71717a;
-  stroke-dasharray: 6 4;
-}
-
-.holders-lorenz-axis {
-  stroke: #52525b;
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.holders-lorenz-axis-tick {
-  stroke: #52525b;
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.holders-lorenz-axis-label {
-  fill: #a1a1aa;
-  font-size: 10px;
-  font-family: inherit;
-}
-
-.holders-lorenz-axis-title {
-  fill: #71717a;
-  font-size: 10px;
-  font-family: inherit;
-  font-weight: 500;
-}
-
-/* Horizontal bar lists (labels + top wallets) */
+/* Horizontal bar lists (labeled groups) */
 .holders-hbar-list {
   display: flex;
   flex-direction: column;
