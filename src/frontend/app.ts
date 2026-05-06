@@ -565,7 +565,7 @@ function renderHolderSupplyTierCard(args: {
 }): string {
   const t = escapeHtmlText(args.title);
   return `<div class="token-supply-legend-item token-supply-legend-item--tier-dashboard">
-    <article class="token-tier-card" style="--tier-accent:${args.accent}">
+    <article class="token-tier-card" style="--tier-accent:${args.accent};--tier-swatch:${args.swatchColor}">
       <h4 class="token-tier-card__title">${t}</h4>
       <ul class="token-tier-card__metrics">
         <li class="token-tier-metric">
@@ -610,7 +610,7 @@ function renderHolderSupplyTierCardPlaceholder(title: string, accent: string, sw
   const dash = '—';
   const t = escapeHtmlText(title);
   return `<div class="token-supply-legend-item token-supply-legend-item--tier-dashboard">
-    <article class="token-tier-card token-tier-card--placeholder" style="--tier-accent:${accent}">
+    <article class="token-tier-card token-tier-card--placeholder" style="--tier-accent:${accent};--tier-swatch:${swatch}">
       <h4 class="token-tier-card__title">${t}</h4>
       <ul class="token-tier-card__metrics">
         <li class="token-tier-metric"><span class="token-tier-metric__ico token-tier-metric__ico--share-swatch" style="--tier-swatch:${swatch}" aria-hidden="true"></span><div class="token-tier-metric__body"><span class="token-tier-metric__muted">${dash}</span></div></li>
@@ -1691,10 +1691,10 @@ function formatCohortVolumeSharePctSuffixHtml(cohortUsd: number, totalUsd: numbe
   return ` <span class="token-stat-cohort-vol-share">${escapeHtmlText(`(${plain})`)}</span>`;
 }
 
-/** Fetched top-holders USD (est.) vs token 24h USD volume — same row shape as top-traders cohort volume. */
+/** Fetched top-holders USD (est.) vs token market cap (USD) — share is cohort / market cap. */
 function formatHoldersCohortUsdRowHtml(t: TokenData, cohortHolderUsd: number | undefined): string {
   const dashTxt = escapeHtmlText('—');
-  const metaN = t.usdValueVolume24h;
+  const metaN = t.marketCap;
 
   const metaRightHtml =
     metaN != null && Number.isFinite(metaN)

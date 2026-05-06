@@ -2366,6 +2366,22 @@ td .mono {
   letter-spacing: 0.01em;
 }
 
+/* Total row: label + balance / circulating use legend swatch (same as donut slice). */
+.token-tier-card .token-tier-metric--total .token-tier-metric__label {
+  color: var(--tier-swatch, var(--tier-accent, #7dd3fc));
+  font-weight: 700;
+}
+
+.token-tier-card .token-tier-metric--total .token-tier-metric__vol-pnl-slice-val {
+  color: var(--tier-swatch, var(--tier-accent, #e0f2fe));
+}
+
+.token-tier-card .token-tier-metric--total .token-tier-metric__vol-pnl-totalvol-suffix {
+  color: var(--tier-swatch, var(--tier-accent, #71717a));
+  opacity: 0.72;
+  font-weight: 600;
+}
+
 .token-tier-metric--total {
   margin-top: 0.12rem;
   padding-top: 0.35rem;
