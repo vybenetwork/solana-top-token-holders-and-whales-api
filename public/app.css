@@ -596,6 +596,61 @@ button:disabled {
   margin-bottom: 0.65rem;
 }
 
+.token-section-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.65rem;
+}
+
+.token-last-updated {
+  position: relative;
+  flex: 0 0 auto;
+  margin-left: auto;
+  overflow: hidden;
+  padding: 0.5rem 0.85rem 0.55rem 1rem;
+  text-align: right;
+  min-width: min(11.75rem, 100%);
+  border-radius: 10px;
+  border: 1px solid rgba(129, 140, 248, 0.32);
+  background: linear-gradient(165deg, rgba(99, 102, 241, 0.14) 0%, rgba(20, 20, 26, 0.98) 48%, #0c0c10 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+.token-last-updated::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 10px 0 0 10px;
+  background: linear-gradient(180deg, #c4b5fd, #6366f1 55%, #4f46e5);
+  pointer-events: none;
+}
+
+.token-last-updated-label {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+}
+
+.token-last-updated-value {
+  display: block;
+  margin-top: 0.22rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #f4f4f5;
+  font-variant-numeric: tabular-nums;
+}
+
 .token-header {
   display: flex;
   align-items: center;
@@ -603,22 +658,30 @@ button:disabled {
   margin-bottom: 1rem;
 }
 
+.token-section-content .token-header {
+  margin-bottom: 0;
+}
+
 .token-logo {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .token-header .symbol {
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: 700;
+  font-size: 1.2rem;
   display: block;
+  letter-spacing: -0.02em;
+  color: #fafafa;
 }
 
 .token-header .name {
-  font-size: 0.85rem;
-  color: #a1a1aa;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-top: 0.12rem;
+  letter-spacing: 0.02em;
 }
 
 .token-stats-groups {
@@ -627,11 +690,388 @@ button:disabled {
   gap: 1.25rem;
 }
 
+/* Match top-traders token panel: tighter groups + inner card title rhythm */
+.token-section-content .token-stats-groups {
+  gap: 0.65rem;
+}
+
+.token-section-content .token-stats-row {
+  gap: 0.65rem;
+}
+
+.token-section-content .token-stats-groups > .token-stats-group,
+.token-section-content .token-stats-row .token-stats-group {
+  padding: 0.65rem 0.72rem 0.72rem 0.92rem;
+  border-radius: 12px;
+  background: linear-gradient(165deg, #141418 0%, #0c0c0f 55%, #0a0a0c 100%);
+  border: 1px solid #2a2a32;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.token-section-content .token-stats-groups .token-stats-group::before {
+  width: 3px;
+  border-radius: 12px 0 0 12px;
+}
+
+.token-section-content .token-stats-group-title {
+  flex-shrink: 0;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+}
+
+.token-section-content .token-stat-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.token-section-content .token-stat-rows--2col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.token-section-content .token-stat-row {
+  display: grid;
+  grid-template-columns: 2.35rem minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
+  min-width: 0;
+  padding: 0.42rem 0.48rem 0.42rem 0.42rem;
+  border-radius: 8px;
+  border: 1px solid #2e2e38;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.28));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.token-section-content .token-stat-row-icon {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.38);
+}
+
+.token-section-content .token-stat-row-icon-svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  display: block;
+}
+
+.token-section-content .token-stat-row-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.token-section-content .token-stat-row-label {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #71717a;
+  line-height: 1.2;
+}
+
+.token-section-content .token-stat-row-value {
+  font-size: 0.8125rem;
+  font-weight: 450;
+  line-height: 1.35;
+  color: #d4d4d8;
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+
+.token-section-content .token-stat-usd-value {
+  color: #4ade80;
+  font-weight: 450;
+}
+
+.token-section-content .token-stat-usd-value .token-stat-row-price-num,
+.token-section-content .token-stat-usd-value .token-stat-price-neg,
+.token-section-content .token-stat-usd-value .token-stat-usd-dollar,
+.token-section-content .token-stat-usd-value .token-stat-price-suffix,
+.token-section-content .token-stat-usd-value .token-price-zero-run {
+  color: inherit;
+  font-weight: inherit;
+}
+
+.token-section-content .token-stat-usd-ratio-sep {
+  color: #71717a;
+  font-weight: 450;
+}
+
+.token-section-content .token-stat-cohort-vol-share {
+  margin-left: 0.15em;
+  font-size: 0.85em;
+  font-weight: 450;
+  color: #a1a1aa;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.token-section-content .token-stat-row-price-num {
+  font-weight: 450;
+  color: #d4d4d8;
+}
+
+.token-section-content .token-stat-row-price-num--compact {
+  letter-spacing: 0.01em;
+}
+
+.token-section-content .token-price-zero-run {
+  font-size: 0.62em;
+  font-weight: 500;
+  line-height: 0;
+  vertical-align: super;
+  margin-left: 0.03em;
+  color: #a1a1aa;
+}
+
+.token-section-content .token-stat-price-suffix {
+  margin-left: 0.28em;
+  font-size: 0.72em;
+  font-weight: 450;
+  color: #94a3b8;
+}
+
+.token-section-content .token-stat-price-neg {
+  margin-right: 0.06em;
+  font-weight: 450;
+  color: #d4d4d8;
+}
+
+.token-section-content .token-stat-row-value a {
+  color: #38bdf8;
+  font-weight: 450;
+  text-decoration: none;
+}
+
+.token-section-content .token-stat-row-value a:hover {
+  color: #7dd3fc;
+}
+
+.token-section-content .token-stat-row--mint {
+  border-color: rgba(56, 189, 248, 0.28);
+  background: linear-gradient(165deg, rgba(14, 165, 233, 0.09), rgba(0, 0, 0, 0.28));
+}
+
+.token-section-content .token-stat-row--mint .token-stat-row-icon {
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.token-section-content .token-stat-row--decimals {
+  border-color: rgba(167, 139, 250, 0.28);
+  background: linear-gradient(165deg, rgba(139, 92, 246, 0.08), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--decimals .token-stat-row-icon {
+  color: #c4b5fd;
+  border-color: rgba(167, 139, 250, 0.38);
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.token-section-content .token-stat-row--category {
+  border-color: rgba(249, 115, 22, 0.25);
+  background: linear-gradient(165deg, rgba(249, 115, 22, 0.07), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--category .token-stat-row-icon {
+  color: #fb923c;
+  border-color: rgba(251, 146, 60, 0.35);
+  background: rgba(249, 115, 22, 0.1);
+}
+
+.token-section-content .token-stat-price-pct {
+  margin-left: 0.25em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.token-section-content .token-stat-price-pct-meta {
+  margin-left: 0.35em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.22em;
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  vertical-align: baseline;
+}
+
+.token-section-content .token-stat-price-pct-arrow {
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+.token-section-content .token-stat-price-pct-period {
+  color: #94a3b8;
+  font-weight: 550;
+}
+
+.token-section-content .token-stat-row--verified {
+  border-color: rgba(52, 211, 153, 0.26);
+  background: linear-gradient(165deg, rgba(16, 185, 129, 0.08), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--verified .token-stat-row-icon {
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.38);
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.token-section-content .token-stat-row--priceUsd {
+  border-color: rgba(56, 189, 248, 0.28);
+  background: linear-gradient(165deg, rgba(14, 165, 233, 0.08), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--priceUsd .token-stat-row-icon {
+  color: #7dd3fc;
+  border-color: rgba(125, 211, 252, 0.35);
+  background: rgba(14, 165, 233, 0.12);
+}
+
+.token-section-content .token-stat-row--marketCap {
+  border-color: rgba(96, 165, 250, 0.28);
+  background: linear-gradient(165deg, rgba(59, 130, 246, 0.08), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--marketCap .token-stat-row-icon {
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.38);
+  background: rgba(37, 99, 235, 0.12);
+}
+
+.token-section-content .token-stat-row--price1d {
+  border-color: rgba(148, 163, 184, 0.22);
+  background: linear-gradient(165deg, rgba(148, 163, 184, 0.06), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--price1d .token-stat-row-icon {
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.32);
+  background: rgba(100, 116, 139, 0.12);
+}
+
+.token-section-content .token-stat-row--price7d {
+  border-color: rgba(129, 140, 248, 0.28);
+  background: linear-gradient(165deg, rgba(99, 102, 241, 0.08), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--price7d .token-stat-row-icon {
+  color: #a5b4fc;
+  border-color: rgba(129, 140, 248, 0.38);
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.token-section-content .token-stat-row--supply {
+  border-color: rgba(52, 211, 153, 0.28);
+  background: linear-gradient(165deg, rgba(16, 185, 129, 0.08), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--supply .token-stat-row-icon {
+  color: #4ade80;
+  border-color: rgba(52, 211, 153, 0.38);
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.token-section-content .token-stat-row--tokenVol24h {
+  border-color: rgba(45, 212, 191, 0.28);
+  background: linear-gradient(165deg, rgba(20, 184, 166, 0.08), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--tokenVol24h .token-stat-row-icon {
+  color: #2dd4bf;
+  border-color: rgba(45, 212, 191, 0.38);
+  background: rgba(13, 148, 136, 0.12);
+}
+
+.token-section-content .token-stat-row--usdVol24h {
+  border-color: rgba(74, 222, 128, 0.28);
+  background: linear-gradient(165deg, rgba(34, 197, 94, 0.08), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--usdVol24h .token-stat-row-icon {
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.38);
+  background: rgba(22, 163, 74, 0.12);
+}
+
+.token-section-content .token-stat-row--topPnlCohortVol {
+  border-color: rgba(52, 211, 153, 0.32);
+  background: linear-gradient(165deg, rgba(16, 185, 129, 0.1), rgba(0, 0, 0, 0.26));
+}
+
+.token-section-content .token-stat-row--topPnlCohortVol .token-stat-row-icon {
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.4);
+  background: rgba(5, 150, 105, 0.14);
+}
+
 .token-stats-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
   align-items: stretch;
+}
+
+.token-stats-row.token-stats-row--split-overview {
+  grid-template-columns: minmax(0, 26%) minmax(0, 74%);
+  align-items: stretch;
+}
+
+.token-stats-row--split-overview > .token-stats-col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.token-stats-col--overview .token-stats-group {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.token-stats-col--overview .token-stat-rows--2col {
+  flex: 1 1 auto;
+  min-height: 0;
+  align-content: start;
+}
+
+.token-stats-pair-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 56%);
+  gap: 0.65rem;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: start;
+  align-self: stretch;
+}
+
+.token-stats-pair-grid > .token-stats-group {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.token-stats-pair-grid .token-stat-rows {
+  flex: 0 1 auto;
 }
 
 .token-stats-col {
@@ -663,7 +1103,7 @@ button:disabled {
   color: #a1a1aa;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin: 0 0 0.75rem 0;
+  margin: 0;
 }
 
 .section-header > h2.token-stats-group-title {
@@ -1026,7 +1466,8 @@ button:disabled {
   margin: 0 0 0.75rem 0;
 }
 
-.meta.token-supply-card-desc {
+/* Holders-only card copy; keep dashboard chart notes on Vybe lede typography (see .wallet-pnl-pnl-trading-lede). */
+.meta.token-supply-card-desc:not(.token-trade-tier-dash__chart-note) {
   margin: 0 0 24px 0;
   font-size: 0.9rem;
   line-height: 1.45;
@@ -1302,7 +1743,7 @@ td .mono {
   overflow: visible;
 }
 
-.holders-dash-merged-intro {
+.holders-dash-merged-intro.wallet-pnl-pnl-trading-lede {
   margin: 0 0 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(63, 63, 70, 0.55);
@@ -1322,18 +1763,169 @@ td .mono {
   border-top: 1px solid rgba(63, 63, 70, 0.55);
 }
 
-.holders-dash-subtitle {
+.holders-dash-section.holders-dash-section--volume-pie {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Nested volume-PnL–style card inside merged dashboard (no second left stripe). */
+.holders-dash-nested-supply-pie.token-supply-card {
+  margin-bottom: 0.5rem;
+  padding-top: calc(1rem + 6px);
+  background: rgba(12, 12, 16, 0.92);
+  border: 1px solid rgba(63, 63, 70, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+.holders-dash-nested-supply-pie.token-supply-card::before {
+  display: none;
+}
+
+/* Profitable traders / volume dash layout (ported from top-traders repo) */
+.token-trade-tier-dash__top {
+  display: grid;
+  grid-template-columns: 1fr minmax(188px, 380px);
+  gap: 1rem 1.25rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.token-trade-tier-dash__titles h2.token-stats-group-title {
+  margin: 0 0 0.45rem;
+  line-height: 1.25;
+}
+
+.token-trade-tier-dash__lede.wallet-pnl-pnl-trading-lede {
+  max-width: 52ch;
+  margin: 0;
+}
+
+.token-trade-tier-dash__insight {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(96, 165, 250, 0.07);
+  border: 1px solid rgba(96, 165, 250, 0.18);
+}
+
+.token-trade-tier-dash__insight-bulb {
+  flex: 0 0 auto;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.token-trade-tier-dash__insight-text {
+  margin: 0;
+}
+
+.token-trade-tier-dash__insight-text.wallet-pnl-pnl-trading-lede {
+  line-height: 1.45;
+}
+
+.token-supply-card--volume-pnl-pie .token-trade-tier-dash__main {
+  grid-template-columns: minmax(200px, 440px) 1fr;
+}
+
+.token-supply-card--volume-pnl-pie .token-trade-tier-dash__chart-col {
+  padding-top: 22px;
+  padding-bottom: 12px;
+}
+
+.token-supply-card--volume-pnl-pie .token-supply-wrap--trade-tier-pie {
+  margin-top: 1.75rem;
+}
+
+.token-trade-tier-dash__chart-title.token-stats-group-title {
   margin: 0 0 0.35rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #d4d4d8;
-  letter-spacing: 0.03em;
+}
+
+.token-trade-tier-dash__chart-note {
+  margin: 0 0 0.65rem;
+  display: flex;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+.token-trade-tier-dash__chart-note--volume-share {
+  margin-right: 40px !important;
+}
+
+.token-trade-tier-dash__note-ico {
+  flex: 0 0 auto;
+  opacity: 0.85;
+}
+
+.token-trade-tier-dash__footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 1rem 0;
+  column-gap: 0;
+  align-items: start;
+  margin-top: 0.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.token-trade-tier-dash__footer-col {
+  padding-right: 1.15rem;
+}
+
+.token-trade-tier-dash__footer-col + .token-trade-tier-dash__footer-col {
+  padding-left: 1.15rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.token-trade-tier-dash__footer-col .token-trade-tier-dash__footer-p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.token-trade-tier-dash__footer-heading.token-stats-group-title {
+  margin: 0 0 0.35rem;
+}
+
+.token-trade-tier-dash__footer-p.wallet-pnl-pnl-trading-lede {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.token-trade-tier-dash__footer-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-left: 0;
+  padding: 0.5rem 0.65rem 0.5rem calc(1.15rem + 0.65rem);
+  border-radius: 8px;
+  background: rgba(15, 15, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 120px;
+}
+
+.token-trade-tier-dash__timeframe-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: #71717a;
+  font-weight: 600;
+}
+
+.token-trade-tier-dash__timeframe-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e4e4e7;
 }
 
 .holders-dash-cohort-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 400px);
   gap: 1.25rem 1.5rem;
   align-items: start;
 }
@@ -1353,11 +1945,11 @@ td .mono {
   margin-top: 0.35rem;
 }
 
-.holders-dash-cohort-concentration {
+.holders-dash-cohort-top-labels {
   min-width: 0;
 }
 
-.holders-dash-cohort-concentration .holders-concentration-inner {
+.holders-dash-cohort-top-labels .holders-hbar-list {
   margin-top: 0.35rem;
 }
 
@@ -1376,6 +1968,14 @@ td .mono {
   grid-template-columns: minmax(200px, 260px) 1fr;
   gap: 1.25rem 1.5rem;
   align-items: start;
+  margin-bottom: 1rem;
+}
+
+/* Labeled vs unlabeled dash only: pie column + tier cards */
+.holders-dash-section--labeled-supply .token-trade-tier-dash__main {
+  grid-template-columns: minmax(200px, 310px) 1fr;
+  gap: 1.2rem 2.5rem;
+  align-items: center;
 }
 
 .token-trade-tier-dash__chart-col {
@@ -1398,14 +1998,6 @@ td .mono {
   padding: 0.45rem min(5.5vw, 22px);
   overflow: visible;
   box-sizing: border-box;
-}
-
-.token-trade-tier-dash__chart-title {
-  margin: 0 0 0.35rem;
-}
-
-.token-trade-tier-dash__chart-note.meta.token-supply-card-desc {
-  margin: 0 0 0.65rem;
 }
 
 .token-supply-legend--compact-grid {
@@ -1459,6 +2051,18 @@ td .mono {
   padding-bottom: 0.75rem;
 }
 
+/* Activity-style dash: full-width bar row under pie (matches top-traders trade-tier card). */
+.token-trade-tier-dash__trades-dist {
+  margin-top: 0.35rem;
+  padding-top: 1rem;
+  padding-bottom: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.token-trade-tier-dash__trades-dist .token-trades-vertical-bars {
+  margin-top: 0.15rem;
+}
+
 .token-trades-vertical-bars {
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
@@ -1468,6 +2072,10 @@ td .mono {
 
 .token-trades-vertical-bars--cols6 {
   grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.token-trades-vertical-bars--cols2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .token-trades-vertical-bar-item {
@@ -1525,9 +2133,11 @@ td .mono {
 }
 
 .wallet-pnl-pnl-trading-lede {
-  font-size: 0.88rem;
-  line-height: 1.45;
-  color: #a1a1aa;
+  margin: 0 0 13px 0;
+  font-size: 0.74rem;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #71717a;
 }
 
 .token-stat-price-pct {
@@ -1536,12 +2146,20 @@ td .mono {
   white-space: nowrap;
 }
 
+.usd-tone {
+  font-variant-numeric: tabular-nums;
+}
+
 .usd-tone--positive {
-  color: #4ade80;
+  color: #86efac;
+}
+
+.usd-tone--neutral {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .usd-tone--negative {
-  color: #f87171;
+  color: #fca5a5;
 }
 
 /* Pie legend tier cards (from top-traders) */
@@ -1799,22 +2417,6 @@ td .mono {
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, #2563eb, #60a5fa);
-}
-
-.holders-conc-gini {
-  grid-column: 1 / -1;
-  padding: 0.65rem 0.75rem;
-  border-radius: 8px;
-  background: rgba(96, 165, 250, 0.06);
-  border: 1px solid rgba(96, 165, 250, 0.15);
-  font-size: 0.85rem;
-  line-height: 1.45;
-  color: #d4d4d8;
-}
-
-.holders-conc-gini strong {
-  color: #93c5fd;
-  font-variant-numeric: tabular-nums;
 }
 
 /* Horizontal bar lists (labeled groups) */
