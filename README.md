@@ -12,11 +12,11 @@ Try the live demo: https://solana-top-token-holders-and-whales-api.vybenetwork.c
 
 Use this project as a reference implementation or starter kit for building Solana holder dashboards, token distribution explorers, whale-monitoring tools, and compliance/forensics workflows powered by Vybe’s high-performance Solana data APIs.
 
-![Solana Top Token Holders & Whales API Repo](screenshots/solana-ohlc-candlestick-data-api-repo.png)
+![Solana Top Token Holders & Whales API Repo](screenshots/solana-top-token-holders-and-whales-api-vybe.png)
 
 <p align="center">
-  <img src="screenshots/solana-ohlc-data-provider-fetch-candlesticks.png" alt="Fetch top holders and supply charts" width="340" style="min-width:340px;max-width:340px;margin-right:10px;" />
-  <img src="screenshots/solana-ohlc-api-endpoint-candlestick-charts.png" alt="Top holders API dashboard sections" width="320" style="min-width:320px;max-width:320px;" />
+  <img src="screenshots/api-for-solana-top-token-holders-vybe.png" alt="Fetch top holders and supply charts" width="440" style="min-width:440px;max-width:440px;margin-right:10px;" />
+  <img src="screenshots/api-for-solana-top-token-holders-and-whales.png" alt="Top holders API dashboard sections" width="320" style="min-width:320px;max-width:320px;" />
 </p>
 
 ---
