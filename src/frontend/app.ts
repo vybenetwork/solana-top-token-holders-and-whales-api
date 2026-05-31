@@ -523,25 +523,25 @@ function renderHolderSupplyTierCard(args: {
           <span class="token-tier-metric__ico token-tier-metric__ico--share-swatch" style="--tier-swatch:${args.swatchColor}" aria-hidden="true"></span>
           <div class="token-tier-metric__body">
             <span class="token-tier-metric__slice-pct">${formatPctSmart(args.slicePct)}</span><span class="token-tier-metric__muted"> of supply</span>
-          </div>
+        </div>
         </li>
         <li class="token-tier-metric">
           <span class="token-tier-metric__ico token-tier-metric__ico--usd" aria-hidden="true">$</span>
           <div class="token-tier-metric__body">
             <span class="token-tier-metric__accent-usd">${args.usdLine}</span><span class="token-tier-metric__muted"> USD (est.)</span>
-          </div>
+      </div>
         </li>
         <li class="token-tier-metric">
           <span class="token-tier-metric__ico token-tier-metric__ico--volume" aria-hidden="true">${TIER_LEGEND_SVG_VOLUME}</span>
           <div class="token-tier-metric__body">
             <span class="token-tier-metric__accent-volume">${args.balanceLine}</span><span class="token-tier-metric__muted"> tokens</span>
-          </div>
+        </div>
         </li>
         <li class="token-tier-metric">
           <span class="token-tier-metric__ico token-tier-metric__ico--people" aria-hidden="true">${TIER_LEGEND_SVG_USER}</span>
           <div class="token-tier-metric__body">
             <span class="token-tier-metric__emph">${args.walletsLine}</span><span class="token-tier-metric__muted"> wallets</span>
-          </div>
+      </div>
         </li>
         <li class="token-tier-metric token-tier-metric--total">
           <span class="token-tier-metric__ico token-tier-metric__ico--volume" aria-hidden="true">${TIER_LEGEND_SVG_VOLUME}</span>
@@ -550,11 +550,11 @@ function renderHolderSupplyTierCard(args: {
             <span class="token-tier-metric__ratio token-tier-metric__ratio--vol-pnl-split">
               <span class="token-tier-metric__vol-pnl-slice-val">${args.circNum}</span><span class="token-tier-metric__vol-pnl-totalvol-suffix"> / ${args.circDen}</span>
             </span>
-          </div>
+        </div>
         </li>
       </ul>
     </article>
-  </div>`;
+    </div>`;
 }
 
 function renderHolderSupplyTierCardPlaceholder(title: string, accent: string, swatch: string): string {
@@ -801,7 +801,7 @@ function hslToHex(h: number, s: number, l: number): string {
   } else if (H < 300) {
     rp = x;
     bp = c;
-  } else {
+      } else {
     rp = c;
     bp = x;
   }
@@ -897,7 +897,7 @@ function tradeTierPieSliceMidAnglesDeg(slices: number[], gapDeg: number): (numbe
   if (entries.length === 0) return out;
   if (entries.length === 1) {
     out[entries[0].i] = 0;
-    return out;
+      return out;
   }
   const total = entries.reduce((sum, e) => sum + e.value, 0);
   const totalGap = Math.min(359, gapDeg * entries.length);
@@ -1518,19 +1518,19 @@ function tokenStatSectionHtml(s: SectionSpec): string {
       <h3 class="token-stats-group-title">${s.icon}<span>${s.title}</span></h3>
       <div class="${rowsClass}">${rows}</div>
     </section>`;
-}
+  }
 
 function formatTokenUpdateTime(ts: number | undefined): string {
-  if (ts == null) return '—';
-  const d = new Date(ts * 1000);
-  return d.toLocaleString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
+    if (ts == null) return '—';
+    const d = new Date(ts * 1000);
+    return d.toLocaleString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
 }
 
 function parseHoldersLimitForLabel(): number {
@@ -1731,7 +1731,7 @@ function renderToken(t: TokenData, cohortHolderUsd?: number): void {
   const dashTxt = escapeHtmlText('—');
 
   const mintLink = mintTrim
-    ? `<a href="https://vybe.fyi/tokens/${encodeURIComponent(mintTrim)}" target="_blank" rel="noopener noreferrer" class="mono" title="${escapeHtmlAttr(mintTrim)}">${truncateMintMiddle(mintTrim)}</a>`
+    ? `<a href="https://vybe.fyi/tokens/${encodeURIComponent(mintTrim)}" target="_blank" rel="noopener" class="mono" title="${escapeHtmlAttr(mintTrim)}">${truncateMintMiddle(mintTrim)}</a>`
     : '';
   const decVal = t.decimal ?? t.decimals;
   const overview: SectionSpec = {
@@ -1867,7 +1867,7 @@ function renderHolders(
     ? list.map((h) => {
           const ownerDisplay = h.ownerName || (h.ownerAddress ? truncateAddress(h.ownerAddress) : '—');
           const ownerLink = h.ownerAddress
-        ? `<a href="https://vybe.fyi/wallets/${encodeURIComponent(h.ownerAddress)}" target="_blank" rel="noopener noreferrer" class="mono" title="${h.ownerAddress}">${ownerDisplay}</a>`
+        ? `<a href="https://vybe.fyi/wallets/${encodeURIComponent(h.ownerAddress)}" target="_blank" rel="noopener" class="mono" title="${h.ownerAddress}">${ownerDisplay}</a>`
             : `<span class="mono">${ownerDisplay}</span>`;
           return `<tr>
         <td>${h.rank ?? '—'}</td>
