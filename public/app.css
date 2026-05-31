@@ -21,6 +21,7 @@
 
 html {
   overflow-x: auto;
+  min-width: 1200px;
   scrollbar-color: #71717a #000000;
   scrollbar-width: thin;
 }
