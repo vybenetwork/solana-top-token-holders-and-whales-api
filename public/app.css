@@ -1117,6 +1117,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   flex-wrap: wrap;
+  min-height: 40px;
+  max-height: 40px;
 }
 
 .section-header h2 {
@@ -1351,12 +1353,14 @@ button:not(.vybe-action-btn):disabled {
   margin-bottom: 0.65rem;
 }
 
-.token-section-top {
+.token-section-intro {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem 1.25rem;
   flex-wrap: wrap;
+  min-height: 48px;
+  max-height: 48px;
   margin-bottom: 0.65rem;
 }
 
