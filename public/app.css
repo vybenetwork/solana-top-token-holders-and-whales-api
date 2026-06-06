@@ -1177,8 +1177,6 @@ body {
 .section-header .section-loading,
 .section-header .section-error,
 .section-header .section-warning {
-  margin: 0 0 0 6px;
-  max-height: 30px;
   align-self: center;
   flex-shrink: 1;
   min-width: 0;
@@ -1477,7 +1475,7 @@ button:not(.vybe-action-btn):disabled {
   margin-left: var(--section-title-indent);
 }
 
-.holders-section .holders-content > .section-lede.meta {
+.holders-section .holders-content > .meta {
   margin-left: var(--section-title-indent);
 }
 
@@ -2625,7 +2623,7 @@ td .mono {
   overflow: visible;
 }
 
-.holders-dash-merged-intro.section-lede.meta {
+.holders-dash-merged-intro.wallet-pnl-pnl-trading-lede {
   margin: 0 0 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(63, 63, 70, 0.55);
