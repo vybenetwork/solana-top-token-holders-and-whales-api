@@ -305,8 +305,14 @@
 
     <section class="section-card section-card--chart panel token-supply-panel" id="tokenSupplyPanel" hidden>
       <div class="section-header token-supply-period-header">
-        <span class="section-header__marker" aria-hidden="true"></span>
-        <h2 class="section-header__title token-supply-period-title">Supply &amp; Holder Charts</h2>
+        <div class="section-header-left">
+          <span class="section-header__marker" aria-hidden="true"></span>
+          <h2 class="section-header__title token-supply-period-title">Supply &amp; Holder Charts</h2>
+          <div class="section-loading" id="tokenSupplyPanelLoading" hidden aria-hidden="true">
+            <span class="loading-spinner"></span>
+            <span class="loading-text">Loading…</span>
+          </div>
+        </div>
       </div>
       <div class="token-supply-grid token-supply-grid--trade-count-pie-row token-supply-grid--section-gap">
         <div
@@ -546,6 +552,6 @@
       <pre id="errorText"></pre>
     </section>
   </div>
-  <script src="app.js?v=21"></script>
+  <script src="app.js?v=22"></script>
 </body>
 </html>

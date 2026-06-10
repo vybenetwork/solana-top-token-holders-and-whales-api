@@ -53,6 +53,7 @@ const tokenName = document.getElementById('tokenName') as HTMLElement;
 const tokenLastUpdatedValue = document.getElementById('tokenLastUpdatedValue') as HTMLElement;
 const tokenStats = document.getElementById('tokenStats') as HTMLElement;
 const tokenSupplyPanel = document.getElementById('tokenSupplyPanel') as HTMLElement;
+const tokenSupplyPanelLoading = document.getElementById('tokenSupplyPanelLoading') as HTMLElement;
 const tokenSupplyPie = document.getElementById('tokenSupplyPie') as HTMLElement;
 const tokenSupplyLegend = document.getElementById('tokenSupplyLegend') as HTMLElement;
 const holdersTopSupplyPieTitle = document.getElementById('holdersTopSupplyPieTitle') as HTMLElement;
@@ -1968,6 +1969,7 @@ async function loadData(): Promise<void> {
   fetchAllBtn.disabled = true;
   loadingIndicator.hidden = false;
   tokenSectionLoading.hidden = false;
+  tokenSupplyPanelLoading.hidden = false;
   holdersLoading.hidden = false;
 
   try {
@@ -2012,6 +2014,7 @@ async function loadData(): Promise<void> {
     fetchAllBtn.disabled = false;
     loadingIndicator.hidden = true;
     tokenSectionLoading.hidden = true;
+    tokenSupplyPanelLoading.hidden = true;
     holdersLoading.hidden = true;
   }
 }
